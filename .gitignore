@@ -4,3 +4,4 @@ images
 Logs
 .env
 .env.local
+*.pyc
