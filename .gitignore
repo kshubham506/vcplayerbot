@@ -7,3 +7,4 @@ Logs
 __pycache__/
 *.py[cod]
 *$py.class
+unknown_errors

@@ -7,7 +7,7 @@ Official Bot : [VCPlayerBot](https://telegram.me/vcplayerbot)   |   Discussion G
   <img width="200" height="200" src="https://i.postimg.cc/QdH3XrxV/Screenshot-2021-05-05-203005-removebg-preview.png">
 </p>
 
-[Checkout AutoForwarder Bot](jttps://sktechhub.com/auto-forward)
+[Checkout AutoForwarder Bot](https://sktechhub.com/auto-forward)
 
 
 # Requirements
