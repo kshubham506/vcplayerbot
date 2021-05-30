@@ -4,4 +4,6 @@ images
 Logs
 .env
 .env.local
-*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
