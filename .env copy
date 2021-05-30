@@ -1,0 +1,16 @@
+BOT_TOKEN=
+API_ID=
+MONGO_URL=
+API_HASH=
+webhookUrl=
+WEBHOOK_AUTH=
+BOT_URL=https://t.me/vcplayerbot
+PARENT_URL=https://t.me/sktechhub
+SUPPORT_GROUP=https://t.me/voicechatsupport
+HELPER_ACT=
+HELPER_ACT_ID=
+BOT_ID=
+LOG_INSIGHT_KEY=
+LOG_INSIGHT_REGION=
+BOT_SESSION=
+USERBOT_SESSION=

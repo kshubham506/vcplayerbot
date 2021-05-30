@@ -1,0 +1,6 @@
+venv
+songs
+images
+Logs
+.env
+.env.local
