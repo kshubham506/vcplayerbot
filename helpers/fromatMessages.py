@@ -16,11 +16,11 @@ def getMessage(message, action):
             send_message = send_message + \
                 f"\n__It is designed to play, as simple as possible, music in your groups through the **new voice chats** introduced by Telegram.__"
             send_message = send_message + \
-                f"\n\n**So why wait 🌀 add the bot to a group and get started 🎧**"
+                f"\n\n**So why wait 🌀 add the bot to a group and get started 🎧**\n\n**Source Code :** [Repository]({config.get('GITHUB_REPO')})"
             return send_message, getReplyKeyBoard(message, action)
 
         elif action == "help-msg":
-            helpMessage = f"**VoiceChat Music Player (b1.5)**\n__Currently Available in **limited groups**.__"
+            helpMessage = f"**VoiceChat Music Player**\n**Source Code :** [Repository]({config.get('GITHUB_REPO')})"
             helpMessage = helpMessage + \
                 f"\n\n• **/play song name/song url : ** __Start a song / add to queue.__"
             helpMessage = helpMessage + f"\n• **/skip : ** __Skip to the next song in queue.__"

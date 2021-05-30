@@ -2,11 +2,19 @@
 from utils.Config import Config
 from requests_futures.sessions import FuturesSession
 from utils.Logger import *
+from utils.ExtractLinks import ExtractLinks
 
 
 class Helper:
     def __init__(self, ) -> None:
         self.config = Config()
+        self.extracturls = ExtractLinks()
+
+    def getUrls(self, message):
+        try:
+            return self.extracturls.extractLinks(message)
+        except Exception as ex:
+            logException("Error in geturls : {}".format(ex))
 
     def sendWebhook(self, msg, hashTag=None):
         try:

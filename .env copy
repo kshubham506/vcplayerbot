@@ -14,3 +14,4 @@ LOG_INSIGHT_KEY=<optional>
 LOG_INSIGHT_REGION=<optional>
 BOT_SESSION=<mandatory>
 USERBOT_SESSION=<mandatory>
+GITHUB_REPO=https://github.com/kshubham506/vcplayerbot
