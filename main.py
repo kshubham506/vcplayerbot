@@ -106,7 +106,9 @@ def main():
                 run_threaded, removeOldFilesSongs, ())
             schedule.every(2).hours.do(
                 run_threaded, removeOldFilesImages, ())
-            schedule.every(6).hours.do(removeStaleClientsScheduler, loop)
+            # make user bot leave stale chats only if auto leave mode is on
+            if config.get('AUTO_LEAVE') == "on":
+                schedule.every(6).hours.do(removeStaleClientsScheduler, loop)
         else:
             pass
             # schedule.every(10).seconds.do(removeStaleClientsScheduler, loop)

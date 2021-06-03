@@ -35,8 +35,11 @@ async def handle_db_calls():
                         run_data.get("playback_footer"))
                 else:
                     config.save_playback_footer('')
+                if run_data.get("auto_leave") in ["on", "off"]:
+                    config.set_auto_leave_mode(
+                        run_data.get("auto_leave"))
             else:
-                logException("DB handler runtime data is none", True)
+                logWarning("DB handler runtime data is none")
 
             # fetch active clients
             active_clients = mongo_client.get_all_chats()

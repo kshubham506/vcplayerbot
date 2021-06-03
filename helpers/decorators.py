@@ -64,8 +64,14 @@ def chat_allowed(func: Callable) -> Callable:
                 return await client.send_message(message.chat.id, f"{msg}", disable_web_page_preview=True, reply_markup=kbd)
             if current_client in [None, []]:
                 logInfo(f"Added a new client in db => {message.chat.id}")
+                state_value = True
+                # if the service is running in single mode , check if there are any active clients , if yes restrict the chta from proceeding
+                # if not add the chta and allow it
+                if config.get("MODE") == "single" and len(config.get("ACTIVE_CLIENTS")) > 0:
+                    state_value = False
+
                 document = {"chat_id": message.chat.id, "type": message.chat.type, "username": message.chat.username if hasattr(message.chat, 'username') else "", "title": message.chat.title if hasattr(message.chat, 'title') else "",
-                            "permissions": {}, "updated_at": datetime.now(), 'admins': [], 'active': True, 'remove_messages': -1, 'admin_mode': False}
+                            "permissions": {}, "updated_at": datetime.now(), 'admins': [], 'active': state_value, 'remove_messages': -1, 'admin_mode': False}
                 MongoDBClient.add_tgcalls_chats(document)
                 current_client = config.fetchClient(message.chat.id)
 

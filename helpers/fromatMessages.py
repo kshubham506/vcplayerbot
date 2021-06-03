@@ -43,9 +43,9 @@ def getMessage(message, action):
         elif action == "chat-not-allowed":
             send_message = f"**😖 Sorry but this chat is not yet allowed to access the service. You can always check the demo in [Support Group]({config.get('SUPPORT_GROUP')}).**"
             send_message = send_message + \
-                f"\n\n**Why ❓**\n1. __This service is still in testing phase and we are allowing access on an invite basis. To get access contact [Support Group]({config.get('SUPPORT_GROUP')}) __"
+                f"\n\n**Why ❓**\n- __Due to high usage we have restrcited the usage of the bot in just our [Support Group]({config.get('SUPPORT_GROUP')}) __"
             send_message = send_message + \
-                f"\n2. __Or your account has been banned. Contact [Support Group]({config.get('SUPPORT_GROUP')}).__"
+                f"\n- __Join the [Support Group]({config.get('SUPPORT_GROUP')}) to access the bot or deploy your own bot __ **Source Code :** [Github]({config.get('GITHUB_REPO')}) __"
 
             return send_message, getReplyKeyBoard(message, action)
 
@@ -75,7 +75,23 @@ def getReplyKeyBoard(message, action):
                             "👥 Support Group", url=f"{config.get('SUPPORT_GROUP')}"),
 
                         InlineKeyboardButton(
-                            "🌐 Website", url=f"{config.get('PARENT_URL')}"),
+                            "📔 Source Code", url=f"{config.get('GITHUB_REPO')}"),
+                    ],
+
+                ]
+            )
+            return keyboard
+        elif action == "chat-not-allowed":
+            keyboard = InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            "🏁 Use In Demo Group", url=f"{config.get('SUPPORT_GROUP')}"),
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            "📔 Source Code", url=f"{config.get('GITHUB_REPO')}"),
+
                     ],
 
                 ]

@@ -9,11 +9,13 @@ class Config(metaclass=Singleton):
     def getCLIParser(self):
         parser = argparse.ArgumentParser()
         parser.add_argument("-env", "--Environment",
-                            help="Provide environment (local/prod)")
-        parser.add_argument("-service", "--Service",
-                            help="Provide service name (call)")
+                            help="[optional]Provide environment (local/prod)")
         parser.add_argument("-server", "--Server",
-                            help="Provide server name (tgserver)")
+                            help="[optional]Provide server name (tgserver [ default value ])")
+        parser.add_argument("-mode", "--Mode",
+                            help="[optional]Provide service mode (single/multiple). single [to restrict which chat can add your bot] , multiple [to allow any chat to add the bot]")
+        parser.add_argument("-autoleave", "--AutoLeave",
+                            help="[optional]Provide AutoLeave Mode For UserBot (on/off). on [to make the user bot leave stale chat iteself] or off [to do nothing regarding stale chats]")
         return parser
 
     def __init__(self) -> None:
@@ -26,6 +28,7 @@ class Config(metaclass=Singleton):
             self.config = dotenv_values(".env.local")
             self.config['env'] = "local"
 
+        self.args.Service = "call"
         if self.args.Service == "call":
             self.config['source'] = "tgcalls"
         else:
@@ -37,12 +40,36 @@ class Config(metaclass=Singleton):
         self.config['ALLOWED_CHAT_TYPES'] = [
             'groups', 'group', 'supergroup', 'supergroups']
         self.config["ACTIVE_CLIENTS"] = []
+        # user ids of users who can perform global admin actions
         self.config["GLOBAL_ADMINS"] = []
+        # numebr which dentores how many simulataneous playbacks can run
         self.config["SIMULTANEOUS_CALLS"] = 5
+        # text to add at footer of each play message (if any)
         self.config['PLAYBACK_FOOTER'] = ''
+        # number of songs that can be added to queue
         self.config['PLAYLIST_SIZE'] = 1
         # chat where restriction of number of simulataneous playbacks is not applicable
-        self.config['SUDO_CHAT'] = [-1001468590972]
+        # if service runs in single mode this needs to be entered
+        self.config['SUDO_CHAT'] = []
+
+        # by default any chat can add the bot (multiple mode)
+        self.config['MODE'] = "multiple"
+        if self.args.Mode is not None:
+            if self.args.Mode.lower() not in ["single", "multiple"]:
+                print(
+                    f"Mode must be either single [to restrict which chat can add your bot] or multiple [to allow any chat to add the bot]")
+                exit()
+            self.config['MODE'] = self.args.Mode.lower()
+            print(f"Starting in {self.config['MODE']} Mode.")
+
+        self.config['AUTO_LEAVE'] = "off"
+        if self.args.AutoLeave is not None:
+            if self.args.AutoLeave.lower() not in ["on", "off"]:
+                print(
+                    f"AUTO_LEAVE must be either on [to make the user bot leave stale chat iteself] or off [to do nothing regarding stale chats]")
+                exit()
+            self.config['AUTO_LEAVE'] = self.args.AutoLeave.lower()
+            print(f"Starting in AUTO_LEAVE : {self.config['AUTO_LEAVE']} ")
 
     def get(self, key):
         return self.config.get(key)
@@ -67,6 +94,9 @@ class Config(metaclass=Singleton):
 
     def save_playback_footer(self, value):
         self.config['PLAYBACK_FOOTER'] = value
+
+    def set_auto_leave_mode(self, value):
+        self.config['AUTO_LEAVE'] = value
 
     def save_playlist_size(self, value):
         self.config['PLAYLIST_SIZE'] = value
