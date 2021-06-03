@@ -67,7 +67,7 @@ def chat_allowed(func: Callable) -> Callable:
                 state_value = True
                 # if the service is running in single mode , check if there are any active clients , if yes restrict the chta from proceeding
                 # if not add the chta and allow it
-                if config.get("MODE") == "single" and len(config.get("ACTIVE_CLIENTS")) > 0:
+                if config.get("MODE") == "single" and len(list(filter(lambda c: c.get('active') is True, config.get("ACTIVE_CLIENTS")))) > 0:
                     state_value = False
 
                 document = {"chat_id": message.chat.id, "type": message.chat.type, "username": message.chat.username if hasattr(message.chat, 'username') else "", "title": message.chat.title if hasattr(message.chat, 'title') else "",
