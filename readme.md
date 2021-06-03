@@ -11,21 +11,24 @@ Official Bot : [VCPlayerBot](https://telegram.me/vcplayerbot)   |   Discussion G
 
 
 # Requirements
-1. Telegram Api Id and Hash
+1. Telegram Api Id and Hash [ Get it from my.telegram.org ]
 2. Python 3.6+
-3. ffmpeg
-4. Mongo DB
+3. ffmpeg [ [How to Install ? ](https://linuxize.com/post/how-to-install-ffmpeg-on-ubuntu-18-04/) ]
+4. Mongo DB [ Create free account from mongo website and get your connection string. ]
 
 # Steps To Setup
-1. Generate your telegram session string (using pyrogram).
-2. Rename `.env copy` to `.env` and fill all the required fields in there.
-3. In Mongo DB a database named `sktechhub` will be created with the collections `tgcalls_chats` , `tgcalls_playbacks` , `tgcalls_users` ( if not present then create them manually). 
+1. Install pyrogram for generatong session string : `pip3 install -U pyrogram`
+2. Generate your telegram session string. Run `python3 generateSession.py`
+3. Rename `.env copy` to `.env` and fill all the required fields in there.
+4. In Mongo DB a database named `sktechhub` will be created with the collections `tgcalls_chats` , `tgcalls_playbacks` , `tgcalls_users` ( if not present then create them manually). 
 
 # Steps to Run
 1. After the setup is done.
 2. Install ffmpeg : `sudo apt-get install ffmpeg`
 3. Install the requirements : `pip3 install -U -r requirements.txt`
-4. Run the service : `python3 main.py -env prod -service call`
+4. Run the service by : 
+  - Run `python3 main.py --help` for available settings.  
+  - Or Run `python3 main.py -env prod` to use default settings
 
 # Features
 Command | Description
