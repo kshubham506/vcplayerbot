@@ -1,6 +1,6 @@
 from pyrogram import Client
 from pyrogram.errors.exceptions import BotMethodInvalid
-from pyrogram.errors.exceptions.bad_request_400 import ChannelInvalid, ChannelPrivate, InviteHashExpired, UserAlreadyParticipant
+from pyrogram.errors.exceptions.bad_request_400 import ChannelInvalid, ChannelPrivate, InviteHashExpired, PeerIdInvalid, UserAlreadyParticipant
 from pyrogram.errors.exceptions.flood_420 import FloodWait
 from pytgcalls import GroupCall
 import time
@@ -11,6 +11,9 @@ from helpers.queues import queues
 from utils.Logger import *
 from utils.Config import Config
 from utils.MongoClient import MongoDBClient
+from pyrogram.raw.functions.phone import LeaveGroupCall
+from pyrogram.raw.functions.channels import GetFullChannel
+
 
 config = Config()
 MongoDBClient = MongoDBClient()
@@ -84,7 +87,6 @@ class GoupCallInstance(object):
             self.logInfo(f"Changed client : {client}")
             self.client = client
             self.pytgcalls.client = client
-            await asyncio.sleep(0.1)
         except Exception as ex:
             logException(f"Changing client error : {ex}")
 
@@ -94,7 +96,6 @@ class GoupCallInstance(object):
             self.currentRepeatCount = 0
             self.playingFile = fileName
             self.pytgcalls.input_filename = fileName
-            await asyncio.sleep(0.1)
             try:
                 if oldFileName is not None and os.path.exists(oldFileName):
                     os.remove(oldFileName)
@@ -120,8 +121,10 @@ class GoupCallInstance(object):
                 user_id=config.get('HELPER_ACT_ID')
             )
             return True
+        except PeerIdInvalid:
+            return True
         except Exception as ex:
-            pass
+            logWarning(f"Error while checkign if helper act is present : {ex}")
         try:
             invitelink = await botClient.export_chat_invite_link(self.chat_id)
             await asyncio.sleep(0.0)
@@ -136,11 +139,11 @@ class GoupCallInstance(object):
             return True
         except InviteHashExpired as ie:
             logWarning(
-                f"Can ignore this => User is denied : {self.chat_id} {ex}")
+                f"Can ignore this => User is denied : {self.chat_id} {ie}")
             return f"__Error while adding helper account `[` {config.get('HELPER_ACT')} `]` in chat.__\n\n**__Make sure the helper account is not in removed users list.__**"
         except FloodWait as fe:
             logWarning(
-                f"Can ignore this => User is denied : {self.chat_id} {ex}")
+                f"Can ignore this => User is denied : {self.chat_id} {fe}")
             return f"__Flood Wait Error while adding helper account `[` {config.get('HELPER_ACT')} `]` in chat.__\n\n**__please wait {fe.x} sec or add the helper accoutn manually.__**"
         except Exception as ex:
             logWarning(
@@ -153,7 +156,6 @@ class GoupCallInstance(object):
                 f"Starting the playback in chat : current song queue : {self.songs}")
             try:
                 await self.pytgcalls.start(self.chat_id)
-                await asyncio.sleep(0.1)
             except Exception as e:
                 return f"✖️ **Error while starting the playback:** __{e}__"
 
@@ -201,7 +203,7 @@ class GoupCallInstance(object):
             self.logException(f"Error while skipPlayBack: {ex}", True)
             return False, f"**__Error while skipping : {ex}__**"
 
-    async def stopPlayBack(self, fromHandler=False, sendMessage=False):
+    async def stopPlayBack(self, fromHandler=False, sendMessage=False, force=False):
         try:
             self.logInfo(
                 f"Stopping the playback : fromHandler : {fromHandler} ")
@@ -225,16 +227,30 @@ class GoupCallInstance(object):
             if fromHandler is False:
                 try:
                     await self.pytgcalls.leave_current_group_call()
-                    await asyncio.sleep(0.1)
                 except Exception as ex:
-                    logException(
+                    logWarning(
                         f"Can be ignored : leave_current_group_call :{ex} , {self.chat_id}")
-                try:
-                    await self.pytgcalls.stop()
+                finally:
                     await asyncio.sleep(0.1)
+                try:
+                    if self.is_connected() is True:
+                        await self.pytgcalls.stop()
                 except Exception as ex:
-                    logException(
+                    logWarning(
                         f"Can be ignored : pytgcalls.stop :{ex} , {self.chat_id}")
+                finally:
+                    # await asyncio.sleep(0.1)
+                    pass
+                if force is True:
+                    try:
+                        input_peer = await self.client.resolve_peer(self.chat_id)
+                        chat = await self.client.send(GetFullChannel(channel=input_peer))
+                        leave_call = LeaveGroupCall(call=chat.full_chat.call,
+                                                    source=506)
+                        await self.client.send(leave_call)
+                    except Exception as ex:
+                        logWarning(f"Failed to force leave :{ex}")
+
             await asyncio.sleep(0.1)
             resp_message = "**__Playback ended and thank you 🙏🏻 for trying and testing the service.__**\n__Do give your feedback/suggestion @sktechhub_chat.__"
             if sendMessage is True and self.bot_client is not None:

@@ -23,13 +23,16 @@ async def stop(client, message, current_client):
                 await delayDelete(m, current_client.get('remove_messages'))
             return
 
-        if pytgcalls_instance.active is not True:
+        force_stop = False
+        if len(message.command) > 1 and message.command[1] == "force":
+            force_stop = True
+        if force_stop is False and pytgcalls_instance.active is not True:
             m = await client.send_message(message.chat.id, f"**🙅‍♂️ No song is being played which can be stopped, start one by sending `/play song_name/url.`**")
             if current_client.get('remove_messages') is not None and current_client.get('remove_messages') > 0:
                 await delayDelete(m, current_client.get('remove_messages'))
             return
 
-        status, resp_message = await pytgcalls_instance.stopPlayBack()
+        status, resp_message = await pytgcalls_instance.stopPlayBack(False, False, force_stop)
 
         m = await client.send_message(message.chat.id, f"{resp_message}")
         if current_client.get('remove_messages') is not None and current_client.get('remove_messages') > 0:

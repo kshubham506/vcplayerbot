@@ -10,6 +10,8 @@ from utils.Config import Config
 from helpers.fromatMessages import getMessage
 from helpers.GenerateCover import generate_cover
 import uuid
+from pyrogram.raw.functions.phone import EditGroupCallTitle
+from pyrogram.raw.functions.channels import GetFullChannel
 
 
 def convert_seconds(seconds):
@@ -91,7 +93,7 @@ async def play(client, message, current_client):
                 return
 
             else:
-
+                cover_file_name = None
                 # generate thumbnail only if the song is first one and not for queue
                 if pytgcalls_instance.active is not True:
                     sent_msg = await sent_msg.edit(f"**__ 🎥 Generating Thumbnail __**")
@@ -141,6 +143,17 @@ async def play(client, message, current_client):
                     else:
 
                         req_by = f"[{requested_by['title']}](tg://user?id={requested_by['chat_id']})"
+
+                        # edit group call title
+                        try:
+                            input_peer = await callmanager.user_app.resolve_peer(message.chat.id)
+                            chat = await callmanager.user_app.send(GetFullChannel(channel=input_peer))
+                            title_change = EditGroupCallTitle(call=chat.full_chat.call,
+                                                              title="Song Player | By SkTechHub")
+                            await callmanager.user_app.send(title_change)
+                        except Exception as ex:
+                            logWarning(
+                                f"Unable to change group call title : {ex}")
 
                         if cover_file_name is not None and os.path.exists(cover_file_name):
                             logInfo(
