@@ -45,7 +45,7 @@ def getMessage(message, action):
             send_message = send_message + \
                 f"\n\n**Why ❓**\n- __Due to high usage we have restrcited the usage of the bot in just our [Support Group]({config.get('SUPPORT_GROUP')}) __"
             send_message = send_message + \
-                f"\n- __Join the [Support Group]({config.get('SUPPORT_GROUP')}) to access the bot or deploy your own bot __ **Source Code :** [Github]({config.get('GITHUB_REPO')}) __"
+                f"\n- __Join the [Support Group]({config.get('SUPPORT_GROUP')}) to access the bot or deploy your own bot __ **Source Code :** [Github]({config.get('GITHUB_REPO')})"
 
             return send_message, getReplyKeyBoard(message, action)
 

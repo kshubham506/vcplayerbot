@@ -38,7 +38,7 @@ class Config(metaclass=Singleton):
         self.config['server'] = 'tgserver'
 
         self.config['ALLOWED_CHAT_TYPES'] = [
-            'groups', 'group', 'supergroup', 'supergroups']
+            'groups', 'group', 'supergroup', 'supergroups', 'megagroup']
         self.config["ACTIVE_CLIENTS"] = []
         # user ids of users who can perform global admin actions
         self.config["GLOBAL_ADMINS"] = []
