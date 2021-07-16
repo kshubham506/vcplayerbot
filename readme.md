@@ -14,13 +14,13 @@ Official Bot : [VCPlayerBot](https://telegram.me/vcplayerbot)   |   Discussion G
 1. Telegram Api Id and Hash [ Get it from my.telegram.org ]
 2. Python 3.6+
 3. ffmpeg [ [How to Install ? ](https://linuxize.com/post/how-to-install-ffmpeg-on-ubuntu-18-04/) ]
-4. Mongo DB [ Create free account from mongo website and get your connection string. ]
+4. Mongo DB [ Create free account from mongo website and get your connection string. ] [ Optional ]
 
 # Steps To Setup
 1. Install pyrogram for generatong session string : `pip3 install -U pyrogram`
 2. Generate your telegram session string. Run `python3 generateSession.py`
-3. Rename `.env copy` to `.env` and fill all the required fields in there.
-4. In Mongo DB a database named `sktechhub` will be created with the collections `tgcalls_chats` , `tgcalls_playbacks` , `tgcalls_users` ( if not present then create them manually). 
+3. Rename `.env copy` to `.env` and fill all the required/mandatory fields in there.
+4. [ Optional ] In Mongo DB a database named `sktechhub` will be created with the collections `tgcalls_chats` , `tgcalls_playbacks` , `tgcalls_users` ( if not present then create them manually). 
 
 # Steps to Run
 1. After the setup is done.
