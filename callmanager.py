@@ -102,9 +102,8 @@ class GoupCallInstance(object):
             except Exception as ex:
                 self.logException(
                     f"Error while removing the file{oldFileName} : {ex}", True)
-            if MongoDBClient.client is not None:
-                MongoDBClient.add_song_playbacks(
-                    songInfo, requester, self.mongo_doc['_id'])
+            MongoDBClient.add_song_playbacks(
+                songInfo, requester, self.mongo_doc['_id'])
         except Exception as ex:
             logException(f"Error in changeFile : {ex}", True)
 
@@ -253,7 +252,7 @@ class GoupCallInstance(object):
                         logWarning(f"Failed to force leave :{ex}")
 
             await asyncio.sleep(0.1)
-            resp_message = "**Playback ended and thank you 🙏🏻 for trying and testing the service.**\n__Do give your feedback/suggestion @sktechhub_chat.__"
+            resp_message = "**__Playback ended and thank you 🙏🏻 for trying and testing the service.__**\n__Do give your feedback/suggestion @sktechhub_chat.__"
             if sendMessage is True and self.bot_client is not None:
                 resp_message = "**Playback ended `[If you were in middle of a song and you are getting this message then this has happended due to a deployement. You can play again after some time.]`**\n\n__Thank you for trying and do give your feedback/suggestion @sktechhub_chat.__"
                 await self.bot_client.send_message(self.chat_id, f"{resp_message}")

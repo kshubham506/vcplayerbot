@@ -8,13 +8,8 @@ from utils.Singleton import Singleton
 class MongoDBClient(metaclass=Singleton):
     def __init__(self) -> None:
         self.config = Config()
-        if self.config.get('MONGO_URL') is None or len(self.config.get('MONGO_URL')) == 0:
-            logWarning(
-                "MONGO_URL is none, all databse features will be disbaled!")
-            self.client = None
-        else:
-            self.client = pymongo.MongoClient(self.config.get('MONGO_URL'))
-            self.sktechhub = self.client["sktechhub"]
+        client = pymongo.MongoClient(self.config.get('MONGO_URL'))
+        self.sktechhub = client["sktechhub"]
 
     def fetchRunTimeData(self):
         try:

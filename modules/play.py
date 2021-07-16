@@ -47,7 +47,7 @@ async def play(client, message, current_client):
         if len(song_url_name) > 1:
             song_url_name = " ".join(song_url_name[1:])
         else:
-            m = await client.send_message(message.chat.id, f"**Invalid Command, Please provide a song url/name.\nEg:__/play faded by alan walker __**")
+            m = await client.send_message(message.chat.id, f"**__Invalid Command, Please provide a song url/name.\n👉 /play faded by alan walker __**")
             if current_client.get('remove_messages') is not None and current_client.get('remove_messages') > 0:
                 await delayDelete(m, current_client.get('remove_messages'))
             return
@@ -117,7 +117,7 @@ async def play(client, message, current_client):
                         footer = f"{Config.get('PLAYBACK_FOOTER')}".replace(
                             '\\n', '\n')
                     footer_val = (
-                        '\n'+footer) if footer is not None else '\nFor any issues contact @voicechatsupport'
+                        '\n'+footer) if footer is not None else ''
 
                     # if curernt call is there , then add it to queue
                     if pytgcalls_instance.active is True:

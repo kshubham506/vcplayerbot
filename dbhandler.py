@@ -13,7 +13,7 @@ config = Config()
 
 
 async def handle_db_calls():
-    while mongo_client.client is not None:
+    while True:
         try:
             # for runtime data
             run_data = mongo_client.fetchRunTimeData()

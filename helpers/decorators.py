@@ -55,23 +55,17 @@ def chat_allowed(func: Callable) -> Callable:
                 logInfo(
                     f"user not allowed to perform action in chat : {message.chat.id} , {message.chat.type}")
 
-                # if this is a private message then add to database
+                # if this is a provate message then add to database
                 if message.chat and message.chat.type == "private":
                     document = {"chat_id": message.chat.id, "type": "private", "username": message.chat.username if hasattr(message.chat, 'username') else "", "first_name": message.chat.first_name if hasattr(message.chat, 'first_name') else "",
                                 "last_name": message.chat.last_name if hasattr(message.chat, 'last_name') else "", "updated_at": datetime.now()}
-                    if MongoDBClient.client is not None:
-                        MongoDBClient.add_tgcalls_users(document)
+                    MongoDBClient.add_tgcalls_users(document)
                 msg, kbd = getMessage(message, 'private-chat')
                 return await client.send_message(message.chat.id, f"{msg}", disable_web_page_preview=True, reply_markup=kbd)
-
-            # if databse url is not present then simply return the current chat as client
-            if MongoDBClient.client is None:
-                current_client = {"chat_id": message.chat.id, "type": message.chat.type, "username": message.chat.username if hasattr(message.chat, 'username') else "", "title": message.chat.title if hasattr(message.chat, 'title') else "",
-                                  "permissions": {}, "updated_at": datetime.now(), 'admins': [], 'active': True, 'remove_messages': -1, 'admin_mode': False}
-            elif current_client in [None, []]:
-                logInfo(f"Adding a new client in db => {message.chat.id}")
+            if current_client in [None, []]:
+                logInfo(f"Added a new client in db => {message.chat.id}")
                 state_value = True
-                # if the service is running in single mode , check if there are any active clients , if yes restrict the chat from proceeding
+                # if the service is running in single mode , check if there are any active clients , if yes restrict the chta from proceeding
                 # if not add the chta and allow it
                 if config.get("MODE") == "single" and len(list(filter(lambda c: c.get('active') is True, config.get("ACTIVE_CLIENTS")))) > 0:
                     state_value = False
@@ -130,16 +124,4 @@ def admin_mode_check(func: Callable) -> Callable:
             await delayDelete(m, 10)
         except Exception as ex:
             logException(f"Error in admin_mode_check : {ex}", True)
-    return decorator
-
-
-def database_check(func: Callable) -> Callable:
-    async def decorator(client: Client, message: Message):
-        try:
-            if MongoDBClient.client is None:
-                m = await client.send_message(message.chat.id, f"**__This action is allowed only if mongo databse url is provided in env parameter.__**")
-                await delayDelete(m, 10)
-            return await func(client, message)
-        except Exception as ex:
-            logException(f"Error in database_check : {ex}", True)
     return decorator
