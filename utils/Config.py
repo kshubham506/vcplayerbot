@@ -64,8 +64,8 @@ class Config(metaclass=Singleton):
             self.config['MODE'] = self.args.Mode.lower()
             print(f"Starting in {self.config['MODE']} Mode.")
 
-        if self.config['MONGO_URL'] is None and self.config['MODE'] == "single":
-            print("Sqitchign to single mode as MONGO_URL is empty.")
+        if ("MONGO_URL" not in self.config or self.config['MONGO_URL'] is None or len(self.config['MONGO_URL']) == 0) and self.config['MODE'] == "single":
+            print("Switchign to single mode as MONGO_URL is empty.")
             self.config['MODE'] = "multiple"
 
         self.config['AUTO_LEAVE'] = "off"
