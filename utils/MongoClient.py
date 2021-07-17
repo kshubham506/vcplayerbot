@@ -10,7 +10,7 @@ class MongoDBClient(metaclass=Singleton):
         self.config = Config()
         if self.config.get('MONGO_URL') is None or len(self.config.get('MONGO_URL')) == 0:
             logWarning(
-                "MONGO_URL is none, all databse features will be disbaled!")
+                "MONGO_URL is none, all database features will be disbaled!")
             self.client = None
         else:
             self.client = pymongo.MongoClient(self.config.get('MONGO_URL'))
