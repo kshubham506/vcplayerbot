@@ -86,8 +86,8 @@ async def play(client, message, current_client):
 
         if songDetails is not None and len(songDetails) > 0:
             song_info = songDetails[0]
-            if time_to_seconds(song_info['duration']) > (10*60):
-                m = await sent_msg.edit(f"**__😢 The specified song is too long , Please use a song with less than 10 min duration.__**")
+            if time_to_seconds(song_info['duration']) > (int(Config.get('ALLOWED_SONG_DURATION_IN_MIN'))*60):
+                m = await sent_msg.edit(f"**__😢 The specified song is too long, Please use a song with less than {Config.get('ALLOWED_SONG_DURATION_IN_MIN')} min duration.__**")
                 if current_client.get('remove_messages') is not None and current_client.get('remove_messages') > 0:
                     await delayDelete(m, current_client.get('remove_messages'))
                 return
@@ -105,7 +105,7 @@ async def play(client, message, current_client):
 
                 # download and process the song
                 sent_msg = await sent_msg.edit(f"**__ ⏱ Beep... Bop... Processing __**")
-                filename = await DownloaderService.download_and_transcode_song(f"https://youtube.com{song_info['url_suffix']}")
+                filename = await DownloaderService.download_and_transcode_song(f"{song_info['link']}")
                 if filename is None:
                     m = await sent_msg.edit(f"**__✖️ Critical Error while post procesing, Try again! __**")
                     if current_client.get('remove_messages') is not None and current_client.get('remove_messages') > 0:
