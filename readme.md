@@ -12,15 +12,30 @@ Official Bot : [VCPlayerBot](https://telegram.me/vcplayerbot)   |   Discussion G
 
 # Requirements
 1. Telegram Api Id and Hash [ Get it from my.telegram.org ]
-2. Python 3.6+
-3. ffmpeg [ [How to Install ? ](https://linuxize.com/post/how-to-install-ffmpeg-on-ubuntu-18-04/) ]
-4. Mongo DB [ Create free account from mongo website and get your connection string. ]
+2. A Telegram Bot Token. Get it from @botfather.
+3. Python 3.6+
+4. ffmpeg [ [How to Install ? ](https://linuxize.com/post/how-to-install-ffmpeg-on-ubuntu-18-04/) ]
+5. [ Optional ] Mongo DB [ Create free account from mongo website and get your connection string. ] 
+
+# Deploying To Heroku
+1. Get your telegram API ID and API HASH from my.telegram.org and the BOT TOKEN from @botfather.
+2. Generate your telegram session string using the `Run on Repl` button below or use the `generateSession.py` file.
+
+- [![Run on Repl.it](https://replit.com/badge/github/kshubham506/vcplayerbot)](https://replit.com/github/kshubham506/vcplayerbot)
+
+
+3. Clcik on the `Deploy to Heroku` button below. Fill in the required fields on the website that opens.
+
+- [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+4. Add the bot to your group and send the [commands](https://github.com/kshubham506/vcplayerbot#features) to start using the VCPlayer Bot :)
+
 
 # Steps To Setup
 1. Install pyrogram for generatong session string : `pip3 install -U pyrogram`
 2. Generate your telegram session string. Run `python3 generateSession.py`
-3. Rename `.env copy` to `.env` and fill all the required fields in there.
-4. In Mongo DB a database named `sktechhub` will be created with the collections `tgcalls_chats` , `tgcalls_playbacks` , `tgcalls_users` ( if not present then create them manually). 
+3. Rename `.env copy` to `.env` and fill all the required/mandatory fields in there.
+4. [ Optional ] In Mongo DB a database named `sktechhub` will be created with the collections `tgcalls_chats` , `tgcalls_playbacks` , `tgcalls_users` ( if not present then create them manually). 
 
 # Steps to Run
 1. After the setup is done.

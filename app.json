@@ -1,0 +1,51 @@
+{
+    "name": "Telegram VCPlayer Bot",
+    "description": "Telegram Voice-Chat Music Player Bot. Dveloped and maintained by SkTechHub.",
+    "repository": "https://github.com/kshubham506/vcplayerbot",
+    "logo": "https://i.postimg.cc/QdH3XrxV/Screenshot-2021-05-05-203005-removebg-preview.png",
+    "keywords": [
+        "vcplayer",
+        "vcplayerbot",
+        "voicechat",
+        "music",
+        "python",
+        "telegram",
+        "bot",
+        "youtube",
+        "telegram-bot",
+        "pyrogram",
+        "pytgcalls",
+        "tgcalls",
+        "telegram-vcbot",
+        "telegram-musicbot"
+    ],
+    "stack": "container",
+    "env": {
+        "API_ID": {
+            "description": "API ID of your Telegram Account. Get it from https://my.telegram.org/apps",
+            "required": true
+        },
+        "API_HASH": {
+            "description": "API HASH of your Telegram Account. Get it from https://my.telegram.org/apps",
+            "required": true
+        },
+        "BOT_TOKEN": {
+            "description": "BOT TOKEN for the music bot. Get this from @BotFather.",
+            "required": true
+        },
+        "USERBOT_SESSION": {
+            "description": "USER BOT Session string. generate this using the generateSession.py script present in github repo.",
+            "required": true
+        },
+        "MONGO_URL": {
+            "description": "MONGO Database URI. Leave it blank as it's not compulsory.",
+            "required": false
+        }
+    },
+    "formation": {
+        "worker": {
+            "quantity": 1,
+            "size": "free"
+        }
+    }
+}

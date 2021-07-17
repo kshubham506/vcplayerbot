@@ -47,7 +47,7 @@ async def play(client, message, current_client):
         if len(song_url_name) > 1:
             song_url_name = " ".join(song_url_name[1:])
         else:
-            m = await client.send_message(message.chat.id, f"**__Invalid Command, Please provide a song url/name.\n👉 /play faded by alan walker __**")
+            m = await client.send_message(message.chat.id, f"**Invalid Command, Please provide a song url/name.\nEg:__/play faded by alan walker __**")
             if current_client.get('remove_messages') is not None and current_client.get('remove_messages') > 0:
                 await delayDelete(m, current_client.get('remove_messages'))
             return
@@ -86,8 +86,8 @@ async def play(client, message, current_client):
 
         if songDetails is not None and len(songDetails) > 0:
             song_info = songDetails[0]
-            if time_to_seconds(song_info['duration']) > (10*60):
-                m = await sent_msg.edit(f"**__😢 The specified song is too long , Please use a song with less than 10 min duration.__**")
+            if time_to_seconds(song_info['duration']) > (int(Config.get('ALLOWED_SONG_DURATION_IN_MIN'))*60):
+                m = await sent_msg.edit(f"**__😢 The specified song is too long, Please use a song with less than {Config.get('ALLOWED_SONG_DURATION_IN_MIN')} min duration.__**")
                 if current_client.get('remove_messages') is not None and current_client.get('remove_messages') > 0:
                     await delayDelete(m, current_client.get('remove_messages'))
                 return
@@ -105,7 +105,7 @@ async def play(client, message, current_client):
 
                 # download and process the song
                 sent_msg = await sent_msg.edit(f"**__ ⏱ Beep... Bop... Processing __**")
-                filename = await DownloaderService.download_and_transcode_song(f"https://youtube.com{song_info['url_suffix']}")
+                filename = await DownloaderService.download_and_transcode_song(f"{song_info['link']}")
                 if filename is None:
                     m = await sent_msg.edit(f"**__✖️ Critical Error while post procesing, Try again! __**")
                     if current_client.get('remove_messages') is not None and current_client.get('remove_messages') > 0:
@@ -117,7 +117,7 @@ async def play(client, message, current_client):
                         footer = f"{Config.get('PLAYBACK_FOOTER')}".replace(
                             '\\n', '\n')
                     footer_val = (
-                        '\n'+footer) if footer is not None else ''
+                        '\n'+footer) if footer is not None else '\nFor any issues contact @voicechatsupport'
 
                     # if curernt call is there , then add it to queue
                     if pytgcalls_instance.active is True:

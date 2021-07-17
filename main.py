@@ -113,7 +113,7 @@ def main():
             pass
             # schedule.every(10).seconds.do(removeStaleClientsScheduler, loop)
 
-        bot = Client(config.get('BOT_SESSION'), api_id=config.get(
+        bot = Client(":memory:", api_id=config.get(
             'API_ID'), api_hash=config.get('API_HASH'), bot_token=config.get("BOT_TOKEN"), plugins=dict(root="modules"))
 
         def sig_handler(signum, frame):
@@ -131,6 +131,13 @@ def main():
 
         bot.start()
         user_app.start()
+
+        bot_details = bot.get_me()
+        user_app_details = user_app.get_me()
+
+        config.setBotId(bot_details.id)
+        config.setHelperActId(user_app_details.id)
+        config.setHeleprActUserName(user_app_details.username)
 
         loop.create_task(handle_db_calls())
 

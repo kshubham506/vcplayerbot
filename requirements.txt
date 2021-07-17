@@ -23,7 +23,7 @@ urlextract
 youtube_dl
 uuid
 ffmpeg-python
-youtube_search
+youtube-search-python
 pymongo
 redis
 dnspython

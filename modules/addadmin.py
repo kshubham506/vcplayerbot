@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 
-from helpers.decorators import chat_allowed, admin_check, delayDelete, admin_mode_check, hasRequiredPermission
+from helpers.decorators import chat_allowed, admin_check, delayDelete, admin_mode_check, hasRequiredPermission, database_check
 from utils.Logger import *
 from utils.MongoClient import MongoDBClient
 
@@ -8,6 +8,7 @@ MongoDBClient = MongoDBClient()
 
 
 @Client.on_message(filters.command(['refreshadmins', 'refreshadmins@vcplayerbot']) & ~filters.edited & ~filters.bot)
+@database_check
 @chat_allowed
 @admin_mode_check
 async def refreshAdmins(client, message, current_client):
@@ -36,6 +37,7 @@ async def refreshAdmins(client, message, current_client):
 
 
 @Client.on_message(filters.command(['auth', 'auth@vcplayerbot']) & ~filters.edited & ~filters.bot)
+@database_check
 @chat_allowed
 @admin_check
 async def addAdmins(client, message, current_client):
@@ -82,6 +84,7 @@ async def addAdmins(client, message, current_client):
 
 
 @Client.on_message(filters.command(['unauth', 'unauth@vcplayerbot']) & ~filters.edited & ~filters.bot)
+@database_check
 @chat_allowed
 @admin_check
 async def removeAdmins(client, message, current_client):
@@ -128,6 +131,7 @@ async def removeAdmins(client, message, current_client):
 
 
 @Client.on_message(filters.command(['listadmins', 'listadmins@vcplayerbot']) & ~filters.edited & ~filters.bot)
+@database_check
 @chat_allowed
 @admin_check
 async def listAdmins(client, message, current_client):
@@ -156,6 +160,7 @@ async def listAdmins(client, message, current_client):
 
 
 @Client.on_message(filters.command(['adminmode', 'adminmode@vcplayerbot']) & ~filters.edited & ~filters.bot)
+@database_check
 @chat_allowed
 @admin_check
 async def adminModeToggle(client, message, current_client):
