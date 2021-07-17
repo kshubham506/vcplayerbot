@@ -77,6 +77,9 @@ class Config(metaclass=Singleton):
             self.config['AUTO_LEAVE'] = self.args.AutoLeave.lower()
             print(f"Starting in AUTO_LEAVE : {self.config['AUTO_LEAVE']} ")
 
+        if self.config['ALLOWED_SONG_DURATION_IN_MIN'] is None:
+            self.config['ALLOWED_SONG_DURATION_IN_MIN'] = 15
+
     def get(self, key):
         return self.config.get(key)
 
