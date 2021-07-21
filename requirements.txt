@@ -31,4 +31,4 @@ pillow
 aiofiles
 aiohttp
 schedule
-pytgcalls
+pytgcalls[pyrogram]

@@ -104,7 +104,7 @@ async def play(client, message, current_client):
                             song_info['title'], song_info['thumbnails'][-1], cover_file_name)
 
                 # download and process the song
-                sent_msg = await sent_msg.edit(f"**__ ⏱ Beep... Bop... Processing __**")
+                sent_msg = await sent_msg.edit(f"**__ ⏱ Beep... Bop... Processing [May Take 30-40 sec]__**")
                 filename = await DownloaderService.download_and_transcode_song(f"{song_info['link']}")
                 if filename is None:
                     m = await sent_msg.edit(f"**__✖️ Critical Error while post procesing, Try again! __**")
@@ -131,7 +131,6 @@ async def play(client, message, current_client):
                     # direct play
                     await pytgcalls_instance.changeFile(
                         filename, song_info, requested_by)
-                    await pytgcalls_instance.changeClient(callmanager.user_app)
 
                     response = await pytgcalls_instance.start_playback(filename, song_info, requested_by)
                     if response is not True:
