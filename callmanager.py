@@ -2,7 +2,7 @@ from pyrogram import Client
 from pyrogram.errors.exceptions import BotMethodInvalid
 from pyrogram.errors.exceptions.bad_request_400 import ChannelInvalid, ChannelPrivate, InviteHashExpired, PeerIdInvalid, UserAlreadyParticipant
 from pyrogram.errors.exceptions.flood_420 import FloodWait
-from pytgcalls import GroupCall
+from pytgcalls import GroupCallFactory
 import time
 import os
 from asyncio import QueueEmpty
@@ -35,11 +35,12 @@ class Singleton(type):
 
 class GoupCallInstance(object):
     def __init__(self, chat_id, mongo_doc, client=None):
-        self.client = client
+        self.client = user_app
         self.bot_client = client
         self.mongo_doc = mongo_doc
         self.chat_id = chat_id
-        self.pytgcalls = GroupCall(self.client)
+        self.pytgcalls = GroupCallFactory(
+            self.client, GroupCallFactory.MTPROTO_CLIENT_TYPE.PYROGRAM).get_file_group_call()
         self.active = False
         self.status = None
         self.songs = []
@@ -53,9 +54,9 @@ class GoupCallInstance(object):
             f"{self.chat_id}=>{msg}", send)
 
         @self.pytgcalls.on_playout_ended
-        async def on_stream_end(gc: GroupCall, *args) -> None:
+        async def on_stream_end(context, *args) -> None:
             try:
-                chat_id = gc.full_chat.id
+                chat_id = context.full_chat.id
                 logInfo(
                     f"Playout ended, skipping to next song, current file which ended : {args}")
                 self.currentRepeatCount = self.currentRepeatCount + 1
@@ -69,10 +70,10 @@ class GoupCallInstance(object):
                 logException(f"Error in on_stream_end: {ex}", True)
 
         @self.pytgcalls.on_network_status_changed
-        async def on_network_changed(gc: GroupCall, is_connected: bool):
+        async def on_network_changed(context, is_connected: bool):
             try:
                 logInfo(f"changing status to : {is_connected}")
-                chat_id = gc.full_chat.id
+                chat_id = context.full_chat.id
                 if is_connected is True:
                     self.active = True
                     self.status = "playing"
@@ -82,17 +83,8 @@ class GoupCallInstance(object):
             except Exception as ex:
                 logException(f"Error in on_network_changed : {ex}", True)
 
-    async def changeClient(self, client):
-        try:
-            self.logInfo(f"Changed client : {client}")
-            self.client = client
-            self.pytgcalls.client = client
-        except Exception as ex:
-            logException(f"Changing client error : {ex}")
-
     async def changeFile(self, fileName, songInfo, requester, oldFileName=None):
         try:
-            self.logInfo(f"Changed file to : {fileName}")
             self.currentRepeatCount = 0
             self.playingFile = fileName
             self.pytgcalls.input_filename = fileName
@@ -105,8 +97,10 @@ class GoupCallInstance(object):
             if MongoDBClient.client is not None:
                 MongoDBClient.add_song_playbacks(
                     songInfo, requester, self.mongo_doc['_id'])
+            self.logInfo(f"Changed file to : {fileName}")
         except Exception as ex:
             logException(f"Error in changeFile : {ex}", True)
+            raise Exception(ex)
 
     def is_connected(self):
         return self.pytgcalls.is_connected

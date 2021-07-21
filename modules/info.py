@@ -2,7 +2,7 @@ from pyrogram import Client, filters
 
 
 import callmanager
-from helpers.decorators import chat_allowed, admin_check, delayDelete
+from helpers.decorators import chat_allowed, admin_check, database_check, delayDelete
 from helpers.fromatMessages import getMessage
 from utils.Logger import *
 from utils.Config import Config
@@ -11,6 +11,7 @@ Config = Config()
 
 
 @Client.on_message(filters.command(['info', 'info@vcplayerbot']) & ~filters.edited & ~filters.bot)
+@database_check
 @chat_allowed
 @admin_check
 async def info(client, message, current_client):
