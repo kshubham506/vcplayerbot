@@ -55,27 +55,35 @@ class Config(metaclass=Singleton):
         self.config['SUDO_CHAT'] = []
 
         # by default any chat can add the bot (multiple mode)
-        self.config['MODE'] = "multiple"
+        if "MODE" not in self.config or self.config['MODE'].lower() not in ["single", "multiple"]:
+            print(f"ENV Mode provided is invalid, using multiple by default")
+            self.config['MODE'] = "multiple"
+        else:
+            self.config['MODE'] = self.config['MODE'].lower()
         if self.args.Mode is not None:
             if self.args.Mode.lower() not in ["single", "multiple"]:
                 print(
                     f"Mode must be either single [to restrict which chat can add your bot] or multiple [to allow any chat to add the bot]")
                 exit()
             self.config['MODE'] = self.args.Mode.lower()
-            print(f"Starting in {self.config['MODE']} Mode.")
+        print(f"Starting in {self.config['MODE']} Mode.")
 
         if ("MONGO_URL" not in self.config or self.config['MONGO_URL'] is None or len(self.config['MONGO_URL']) == 0) and self.config['MODE'] == "single":
-            print("Switchign to single mode as MONGO_URL is empty.")
+            print("Switchign to multiple mode as MONGO_URL is empty.")
             self.config['MODE'] = "multiple"
 
-        self.config['AUTO_LEAVE'] = "off"
+        if "AUTO_LEAVE" not in self.config or self.config['AUTO_LEAVE'].lower() not in ["on", "off"]:
+            print(f"ENV AUTO_LEAVE provided is invalid, using off by default")
+            self.config['AUTO_LEAVE'] = "off"
+        else:
+            self.config['AUTO_LEAVE'] = self.config['AUTO_LEAVE'].lower()
         if self.args.AutoLeave is not None:
             if self.args.AutoLeave.lower() not in ["on", "off"]:
                 print(
                     f"AUTO_LEAVE must be either on [to make the user bot leave stale chat iteself] or off [to do nothing regarding stale chats]")
                 exit()
             self.config['AUTO_LEAVE'] = self.args.AutoLeave.lower()
-            print(f"Starting in AUTO_LEAVE : {self.config['AUTO_LEAVE']} ")
+        print(f"Starting in AUTO_LEAVE : {self.config['AUTO_LEAVE']} ")
 
         if self.config['ALLOWED_SONG_DURATION_IN_MIN'] is None:
             self.config['ALLOWED_SONG_DURATION_IN_MIN'] = 15
