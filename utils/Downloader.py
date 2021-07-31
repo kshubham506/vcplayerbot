@@ -40,6 +40,7 @@ class Downloader(metaclass=Singleton):
             options = {
                 # PERMANENT options
                 'format': 'bestaudio/best',
+                'verbose': True
                 # 'keepvideo': False,
                 # 'outtmpl': f'{self.root}{fileName}.*',
                 # 'postprocessors': [{
@@ -61,7 +62,8 @@ class Downloader(metaclass=Singleton):
 
             loop = asyncio.get_running_loop()
             await loop.run_in_executor(
-                None, functools.partial(self.transcode, f"{fileName}", extension)
+                None, functools.partial(
+                    self.transcode, f"{fileName}", extension)
             )
             return f"{self.root}{fileName}.raw"
         except Exception as ex:
