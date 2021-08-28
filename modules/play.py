@@ -63,14 +63,6 @@ async def play(client, message, current_client):
                 await delayDelete(m, current_client.get('remove_messages'))
             return
 
-        current_call = await pytgcalls_instance.getCurrentCall()
-        if current_call is None:
-            # if there are no active voice chats
-            msg, kbd = getMessage(message, 'start-voice-chat')
-            m = await client.send_message(message.chat.id, f"{msg}", disable_web_page_preview=True, reply_markup=kbd)
-            if current_client.get('remove_messages') is not None and current_client.get('remove_messages') > 0:
-                await delayDelete(m, current_client.get('remove_messages'))
-            return
 
         # pre check if done only for new songs(first time playbacks)
         if pytgcalls_instance.active is not True:

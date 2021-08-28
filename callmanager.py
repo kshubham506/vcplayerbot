@@ -1,3 +1,4 @@
+from helpers.fromatMessages import getMessage
 from pyrogram import Client
 from pyrogram.errors.exceptions import BotMethodInvalid
 from pyrogram.errors.exceptions.bad_request_400 import ChannelInvalid, ChannelPrivate, InviteHashExpired, PeerIdInvalid, UserAlreadyParticipant
@@ -7,6 +8,8 @@ import time
 import os
 from asyncio import QueueEmpty
 import asyncio
+
+from pytgcalls.exceptions import GroupCallNotFoundError
 from helpers.queues import queues
 from utils.Logger import *
 from utils.Config import Config
@@ -105,10 +108,6 @@ class GoupCallInstance(object):
     def is_connected(self):
         return self.pytgcalls.is_connected
 
-    async def getCurrentCall(self):
-        self.logInfo(f"Making call to get current calls in the chat.")
-        return await self.pytgcalls.get_group_call(self.chat_id)
-
     async def preCheck(self, botClient, useClient):
         try:
             await botClient.get_chat_member(
@@ -151,6 +150,9 @@ class GoupCallInstance(object):
                 f"Starting the playback in chat : current song queue : {self.songs}")
             try:
                 await self.pytgcalls.start(self.chat_id)
+            except GroupCallNotFoundError as ex:
+                msg, kbd = getMessage(None, 'start-voice-chat')
+                return msg
             except Exception as e:
                 return f"✖️ **Error while starting the playback:** __{e}__"
 
