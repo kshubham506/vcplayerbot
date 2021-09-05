@@ -42,7 +42,7 @@ async def generate_cover(title, thumbnail, result_file_name):
         background = resized_thumbnail.convert("RGBA")
 
         Image.alpha_composite(background, foreground).save(
-            f"images/{temp_file}.png", optimize=True, quality=40
+            f"images/{temp_file}.png", optimize=True, quality=20
         )
 
         img = Image.open(f"images/{temp_file}.png")
@@ -55,7 +55,7 @@ async def generate_cover(title, thumbnail, result_file_name):
         draw.text((985, 20), f"A SkTechHub", fill="white", font=KRONA_SMALL)
         draw.text((1100, 50), f"Product", fill="white", font=KRONA_SMALL)
 
-        img.save(result_file_name, optimize=True, quality=40)
+        img.save(result_file_name, optimize=True, quality=20)
         final_img = result_file_name
     except Exception as ex:
         logException(f"Error while generating cover : {ex}", True)
@@ -68,10 +68,9 @@ async def generate_blank_cover(result_file_name):
     final_img = None
     try:
         logInfo(f"Request to generate cover for filename : {result_file_name}")
-
         foreground = Image.open(f"etc/powered_by_sktechhub.png")
         resized_thumbnail = changeImageSize(1280, 720, foreground)
-        resized_thumbnail.save(result_file_name, optimize=True, quality=40)
+        resized_thumbnail.save(result_file_name, optimize=True, quality=20)
         final_img = result_file_name
     except Exception as ex:
         logException(f"Error while generating cover : {ex}", True)
