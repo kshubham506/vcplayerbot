@@ -20,24 +20,19 @@ async def handle_db_calls():
             # logInfo(f"Making call to fetch runtime data")
             if run_data is not None:
                 if run_data.get("alowed_chat_types") not in [None]:
-                    config.setAllowedChatTypes(
-                        run_data.get("alowed_chat_types"))
+                    config.setAllowedChatTypes(run_data.get("alowed_chat_types"))
                 if run_data.get("global_admins") not in [None]:
                     config.saveGlobalAdmins(run_data.get("global_admins"))
                 if isinstance(run_data.get("simultaneous_calls"), int) is True:
-                    config.save_simultaneous_calls(
-                        run_data.get("simultaneous_calls"))
+                    config.save_simultaneous_calls(run_data.get("simultaneous_calls"))
                 if isinstance(run_data.get("playlist_size"), int) is True:
-                    config.save_playlist_size(
-                        run_data.get("playlist_size"))
-                if run_data.get("playback_footer") not in [None, '']:
-                    config.save_playback_footer(
-                        run_data.get("playback_footer"))
+                    config.save_playlist_size(run_data.get("playlist_size"))
+                if run_data.get("playback_footer") not in [None, ""]:
+                    config.save_playback_footer(run_data.get("playback_footer"))
                 else:
-                    config.save_playback_footer('')
+                    config.save_playback_footer("")
                 if run_data.get("auto_leave") in ["on", "off"]:
-                    config.set_auto_leave_mode(
-                        run_data.get("auto_leave"))
+                    config.set_auto_leave_mode(run_data.get("auto_leave"))
             else:
                 logWarning("DB handler runtime data is none")
 

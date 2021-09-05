@@ -1,5 +1,5 @@
 # Telegram VCPlayer Bot
-Play any song directly into your group voice chat.
+Play any song/video directly into your group voice chat.
 
 Official Bot : [VCPlayerBot](https://telegram.me/vcplayerbot)   |   Discussion Group : [VoiceChat Music Player Support](https://telegram.me/voicechatsupport)
 
@@ -14,8 +14,7 @@ Official Bot : [VCPlayerBot](https://telegram.me/vcplayerbot)   |   Discussion G
 1. Telegram Api Id and Hash [ Get it from my.telegram.org ]
 2. A Telegram Bot Token. Get it from @botfather.
 3. Python 3.6+
-4. ffmpeg [ [How to Install ? ](https://linuxize.com/post/how-to-install-ffmpeg-on-ubuntu-18-04/) ]
-5. [ Optional ] Mongo DB [ Create free account from mongo website and get your connection string. ] 
+4. [ Optional ] Mongo DB [ Create free account from mongo website and get your connection string. ] 
 
 # Deploying To Heroku
 1. Get your telegram API ID and API HASH from my.telegram.org and the BOT TOKEN from @botfather.
@@ -39,9 +38,8 @@ Official Bot : [VCPlayerBot](https://telegram.me/vcplayerbot)   |   Discussion G
 
 # Steps to Run
 1. After the setup is done.
-2. Install ffmpeg : `sudo apt-get install ffmpeg`
-3. Install the requirements : `pip3 install -U -r requirements.txt`
-4. Run the service by : 
+2. Install the requirements : `pip3 install -U -r requirements.txt`
+3. Run the service by : 
   - Run `python3 main.py --help` for available settings.  
   - Or Run `python3 main.py -env prod` to use default settings
 
@@ -63,11 +61,9 @@ Available env varibales
 Command | Description
 ------------ | -------------
 /start , /help | Lists the available commands.
-/play song_name | Starts the song in the voice chat.
-/skip | Skips the current song.
+/play song_name/song_url -res[num] | Starts the song in the voice chat, num specifies the audio resolution.
+/play song_name/song_url -video -res[num] | Starts the video in the voice chat, num specifies the video resolution.
 /stop | Stops the playback.
-/loop off , /loop [2-5] | Loops the song to x times.
-/info | Shows the info of the playback in the chat.
 /refreshadmins | Refreshes the admin list in the chat.
 /auth | Adds the user mentioned in the reply to bot admin list.
 /unauth | Removes the user mentioned in the reply from bot admin list.
