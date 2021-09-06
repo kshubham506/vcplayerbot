@@ -24,7 +24,7 @@ async def videoSearch(songName, songUrl, video=False, res=480):
             description = "" if song.description is None else song.description
             if video is True:
                 filtered = (
-                    song.streams.filter(file_extension="mp4")
+                    song.streams.filter(progressive=True, file_extension="mp4")
                     .order_by("resolution")
                     .desc()
                 )
