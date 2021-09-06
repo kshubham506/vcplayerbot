@@ -40,8 +40,7 @@ class Singleton(type):
 
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
-            cls._instances[cls] = super(
-                Singleton, cls).__call__(*args, **kwargs)
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
 
 
@@ -83,13 +82,22 @@ class GoupCallInstance(object):
             try:
                 await self.pytgcalls.join(self.chat_id)
                 if songInfo["is_video"] is False:
-                    await self.pytgcalls.start_audio(songInfo["link"])
+                    await self.pytgcalls.start_audio(
+                        songInfo["link"], repeat=songInfo["is_repeat"]
+                    )
                 else:
-                    await self.pytgcalls.start_video(songInfo["link"])
+                    await self.pytgcalls.start_video(
+                        songInfo["link"], repeat=songInfo["is_repeat"]
+                    )
             except GroupCallNotFoundError as ex:
                 msg, kbd = getMessage(None, "start-voice-chat")
                 return msg
             except Exception as e:
+                try:
+                    await self.pytgcalls.stop()
+                except Exception as ex:
+                    pass
+                self.logException(f"Error while starting the playback: {e}", True)
                 return f"✖️ **Error while starting the playback:** __{e}__"
 
             self.songs.append(
@@ -104,12 +112,11 @@ class GoupCallInstance(object):
             return True
         except Exception as ex:
             self.logException(f"Error while starting the playback: {ex}", True)
-            return f"**__{ex}__**\n\n__Please add the heleper account `[` {config.get('HELPER_ACT')} `]` in this chat and then send the command again.__"
+            return f"**__{ex}__**\n\n__Please add the helper account `[` {config.get('HELPER_ACT')} `]` in this chat and then send the command again.__"
 
     async def stopPlayBack(self, fromHandler=False, sendMessage=False):
         try:
-            self.logInfo(
-                f"Stopping the playback : fromHandler : {fromHandler} ")
+            self.logInfo(f"Stopping the playback : fromHandler : {fromHandler} ")
 
             for s in self.songs:
                 try:
@@ -137,7 +144,9 @@ class GoupCallInstance(object):
                     )
 
             await asyncio.sleep(0.1)
-            resp_message = "**Playback ended and thank you 🙏🏻 for trying and testing the service.**\n__Do give your feedback/suggestion @sktechhub_chat.__"
+            resp_message = (
+                "__Playback ended, do give your feedback/suggestion @sktechhub_chat.__"
+            )
             if sendMessage is True and self.bot_client is not None:
                 resp_message = "**Playback ended `[If you were in middle of a song and you are getting this message then this has happended due to a deployement. You can play again after some time.]`**\n\n__Thank you for trying and do give your feedback/suggestion @sktechhub_chat.__"
                 await self.bot_client.send_message(self.chat_id, f"{resp_message}")
@@ -209,8 +218,7 @@ class MusicPlayer(metaclass=Singleton):
                     if gc is not None and gc.active is True:
                         await gc.stopPlayBack(False, True)
                 except Exception as ex:
-                    logException(
-                        f"Error while shutting down {chat_id},  {ex}", True)
+                    logException(f"Error while shutting down {chat_id},  {ex}", True)
 
         except Exception as ex:
             logException(

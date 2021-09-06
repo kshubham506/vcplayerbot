@@ -29,13 +29,19 @@ class Helper:
         try:
             if arg == "IS_VIDEO":
                 return re.search(" -video", command) is not None
+            elif arg == "REPEAT":
+                return re.search(" -repeat", command) is not None
+            elif arg == "SILENT":
+                return re.search(" -silent", command) is not None
             elif arg == "RES":
                 res = re.findall(" -res\w+", command)
                 if len(res) > 0:
                     quality = re.findall("\d+", res[0])
                     return quality[0] if len(quality) > 0 else None
             elif arg == "NAME":
-                return re.sub("\/play|-video|-res\w+", "", command).strip()
+                return re.sub(
+                    "\/play|-video|-repeat|-silent|-res\w+", "", command
+                ).strip()
             else:
                 raise Exception("Invalid arg")
         except Exception as ex:

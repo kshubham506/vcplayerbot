@@ -71,6 +71,15 @@ def removeOldFilesSongs(path=["songs/"]):
         return []
 
 
+def removeOldFiles():
+    try:
+        removeOldFilesSongs()
+        removeOldFilesImages()
+    except Exception as ex:
+        logException(f"Error while removing files in scheduler- {ex}", True)
+        return []
+
+
 def removeStaleClientsScheduler(loop):
     try:
         loop.create_task(leaveStaleChats())
@@ -105,8 +114,7 @@ def main():
         config = Config()
 
         if config.get("env") == "prod":
-            schedule.every(3).hours.do(run_threaded, removeOldFilesSongs, ())
-            schedule.every(2).hours.do(run_threaded, removeOldFilesImages, ())
+            schedule.every(3).hours.do(run_threaded, removeOldFiles, ())
             # make user bot leave stale chats only if auto leave mode is on
             if config.get("AUTO_LEAVE") == "on":
                 schedule.every(6).hours.do(removeStaleClientsScheduler, loop)

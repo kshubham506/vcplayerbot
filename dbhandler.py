@@ -48,7 +48,7 @@ async def handle_db_calls():
             if config.get("env") == "local":
                 await asyncio.sleep(5)
             else:
-                await asyncio.sleep(30)
+                await asyncio.sleep(60)
 
 
 async def leaveStaleChats():

@@ -3,7 +3,14 @@ import os
 import re
 import callmanager
 from utils.SongInfoFetcher import videoSearch
-from helpers.decorators import chat_allowed, delayDelete, admin_mode_check
+from helpers.decorators import (
+    chat_allowed,
+    delayDelete,
+    admin_mode_check,
+    send_message,
+    edit_sent_message,
+    parsePlayCommand,
+)
 from utils.Helper import Helper
 from utils.Logger import *
 from utils.Config import Config
@@ -27,37 +34,6 @@ def convert_seconds(seconds):
 Config = Config()
 
 
-def parsePlayCommand(command):
-    is_video = helper.checkForArguments(command, "IS_VIDEO")
-    resolution = helper.checkForArguments(command, "RES")
-    if resolution is None:
-        resolution = 256 if is_video is False else 480
-    song_name = helper.checkForArguments(command, "NAME")
-    _urls = helper.getUrls(song_name)
-    is_url = len(_urls) > 0
-    song_url = _urls[0] if is_url is True else None
-    is_youtube = (
-        True
-        if (
-            is_url is False
-            or (
-                is_url is True
-                and re.search("youtube\.|youtu\.be|youtube-nocookie\.", song_url)
-            )
-        )
-        else False
-    )
-
-    return {
-        "is_video": is_video,
-        "resolution": resolution,
-        "is_youtube": is_youtube,
-        "is_url": is_url,
-        "song_url": song_url,
-        "song_name": song_name,
-    }
-
-
 @Client.on_message(
     filters.command(["play", "play@vcplayerbot"]) & ~filters.edited & ~filters.bot
 )
@@ -75,27 +51,39 @@ async def play(client, message, current_client):
                     if hasattr(message.from_user, "username")
                     else "User"
                 ),
+                "is_admin": current_client.get("is_admin", False),
             }
             if message.from_user is not None
             else {
                 "chat_id": message.chat.id,
                 "title": message.chat.title
-                if hasattr(message.chat, "ttile")
+                if hasattr(message.chat, "title")
                 else "Chat",
+                "is_admin": current_client.get("is_admin", False),
             }
         )
         chat_id = message.chat.id
-        logInfo(f"Playing command in chat : {chat_id} , requested_by : {requested_by}")
+        logInfo(
+            f"Playing command in chat : {chat_id} , requested_by : {requested_by}, command : {message.text}"
+        )
         # check if song url or name is provided or not
-        parsed_command = parsePlayCommand(message.text)
+        parsed_command = parsePlayCommand(
+            message.text, current_client.get("is_admin", False)
+        )
+        logInfo(f"Parsed Command : {parsed_command}")
+        if parsed_command["is_silent"] is True:
+            await delayDelete(message)
 
         if helper.isEmpty(parsed_command["song_name"]):
-            m = await client.send_message(
+            m = await send_message(
+                client,
                 message.chat.id,
                 f"**Please provide a song url/name.\nLike :__/play faded by alan walker __**",
+                parsed_command["is_silent"],
             )
             if (
-                current_client.get("remove_messages") is not None
+                m is not None
+                and current_client.get("remove_messages") is not None
                 and current_client.get("remove_messages") > 0
             ):
                 await delayDelete(m, current_client.get("remove_messages"))
@@ -106,16 +94,22 @@ async def play(client, message, current_client):
             chat_id, current_client, client
         )
         if pytgcalls_instance is None:
-            m = await client.send_message(message.chat.id, f"{err_message}")
+            m = await send_message(
+                client, message.chat.id, f"{err_message}", parsed_command["is_silent"]
+            )
             if (
-                current_client.get("remove_messages") is not None
+                m is not None
+                and current_client.get("remove_messages") is not None
                 and current_client.get("remove_messages") > 0
             ):
                 await delayDelete(m, current_client.get("remove_messages"))
             return
 
-        sent_msg = await client.send_message(
-            message.chat.id, f"**__👀 Fetching song details... __**"
+        sent_msg = await send_message(
+            client,
+            message.chat.id,
+            f"**__👀 Fetching song details... __**",
+            parsed_command["is_silent"],
         )
         if parsed_command["is_youtube"] is True:
             songDetails = await videoSearch(
@@ -126,11 +120,15 @@ async def play(client, message, current_client):
             )
         else:
             if parsed_command["song_url"] is None:
-                m = await client.send_message(
-                    message.chat.id, f"**__Please provide a direct streamable url.__"
+                m = await send_message(
+                    client,
+                    message.chat.id,
+                    f"**__Please provide a direct streamable url.__",
+                    parsed_command["is_silent"],
                 )
                 if (
-                    current_client.get("remove_messages") is not None
+                    m is not None
+                    and current_client.get("remove_messages") is not None
                     and current_client.get("remove_messages") > 0
                 ):
                     await delayDelete(m, current_client.get("remove_messages"))
@@ -145,50 +143,59 @@ async def play(client, message, current_client):
                     "duration": None,
                     "views": None,
                     "link": parsed_command["song_url"],
-                    "resolution": 480,
+                    "resolution": "Default",
                     "is_video": True,
                 }
             ]
 
         if songDetails is not None and len(songDetails) > 0:
             song_info = songDetails[0]
+            song_info["is_repeat"] = parsed_command["is_repeat"]
 
             cover_file_name = None
             # generate thumbnail only if the song is first one and not for queue
-            sent_msg = await sent_msg.edit(f"**__ 🎥 Generating Thumbnail __**")
+            sent_msg = await edit_sent_message(
+                sent_msg,
+                f"**__ 🎥 Generating Thumbnail __**",
+                parsed_command["is_silent"],
+            )
             cover_file_name = None
-            if (
-                song_info.get("thumbnails") is not None
-                and len(song_info["thumbnails"]) > 0
-            ):
-                cover_file_name = f"images/{uuid.uuid4()}.png"
-                cover_file_name = await generate_cover(
-                    song_info["title"],
-                    song_info["thumbnails"][-1],
-                    cover_file_name,
-                )
-            else:
-                cover_file_name = f"images/{uuid.uuid4()}.png"
-                cover_file_name = await generate_blank_cover(cover_file_name)
+            if parsed_command["is_silent"] is False:
+                if (
+                    song_info.get("thumbnails") is not None
+                    and len(song_info["thumbnails"]) > 0
+                ):
+                    cover_file_name = f"images/{uuid.uuid4()}.png"
+                    cover_file_name = await generate_cover(
+                        song_info["title"],
+                        song_info["thumbnails"][-1],
+                        cover_file_name,
+                    )
+                else:
+                    cover_file_name = f"images/{uuid.uuid4()}.png"
+                    cover_file_name = await generate_blank_cover(cover_file_name)
 
             footer = None
             if Config.get("PLAYBACK_FOOTER") not in ["", None]:
                 footer = f"{Config.get('PLAYBACK_FOOTER')}".replace("\\n", "\n")
             footer_val = (
-                ("\n" + footer)
+                footer
                 if footer is not None
-                else "\nFor any issues contact @voicechatsupport"
+                else "For any issues contact @voicechatsupport"
             )
-            print("Start playback")
+
             response = await pytgcalls_instance.start_playback(
                 song_info, requested_by=requested_by
             )
             if response is not True:
-                m = await sent_msg.edit(
-                    f"**__😢 Unable to perform the required operation.__**\n{response}"
+                m = await edit_sent_message(
+                    sent_msg,
+                    f"**__😢 Unable to perform the required operation.__**\n{response}",
+                    parsed_command["is_silent"],
                 )
                 if (
-                    current_client.get("remove_messages") is not None
+                    m is not None
+                    and current_client.get("remove_messages") is not None
                     and current_client.get("remove_messages") > 0
                 ):
                     await delayDelete(m, current_client.get("remove_messages"))
@@ -213,7 +220,7 @@ async def play(client, message, current_client):
             if cover_file_name is not None and os.path.exists(cover_file_name):
                 logInfo(f"Sending cover mesage in chat : {chat_id} : {cover_file_name}")
 
-                caption = f"**{'📹' if song_info['is_video'] is True else '🎧'} Name:** `{(song_info['title'].strip())[:20]}`\n**⏱ Duration:** `{song_info['duration']} sec`\n**💡 Requester:** {req_by}\n\n`Join voice chat to listen to the song.`{footer_val}"
+                caption = f"**{'📹' if song_info['is_video'] is True else '🎧'} Name:** `{(song_info['title'].strip())[:20]}`\n**⏱ Duration:** `{song_info['duration']}` | **📺 Res:** `{song_info['resolution']}`\n**💡 Requester:** {req_by}\n\n{footer_val}"
                 m = await client.send_photo(
                     message.chat.id,
                     photo=cover_file_name,
@@ -224,16 +231,21 @@ async def play(client, message, current_client):
                     os.remove(cover_file_name)
                 return
             else:
-                m = await sent_msg.edit(
-                    f"**✅ Playing Now **\n\n**🎧 Name:** `{(song_info['title'].strip())[:20]}`\n**⏱ Duration:** `{song_info['duration']}`\n**💡 Requester:** {req_by}{footer_val}"
+                m = await edit_sent_message(
+                    sent_msg,
+                    f"**✅ Playing Now **\n\n**🎧 Name:** `{(song_info['title'].strip())[:20]}`\n**⏱ Duration:** `{song_info['duration']}`\n**💡 Requester:** {req_by}\n\n{footer_val}",
+                    parsed_command["is_silent"],
                 )
                 return
 
-        m = await sent_msg.edit(
-            f"**__😢 Unable to find the required song, Please try again.__**"
+        m = await edit_sent_message(
+            sent_msg,
+            f"**__😢 Unable to find the required song, Please try again.__**",
+            parsed_command["is_silent"],
         )
         if (
-            current_client.get("remove_messages") is not None
+            m is not None
+            and current_client.get("remove_messages") is not None
             and current_client.get("remove_messages") > 0
         ):
             await delayDelete(m, current_client.get("remove_messages"))

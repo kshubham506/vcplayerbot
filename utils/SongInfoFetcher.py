@@ -11,7 +11,9 @@ async def videoSearch(songName, songUrl, video=False, res=480):
     try:
         if helper.isEmpty(songName):
             return None
-        logInfo(f"Making call to fetch song details for : {songName} -> url : {songUrl}")
+        logInfo(
+            f"Making call to fetch song details for : {songName} -> url : {songUrl}"
+        )
 
         # make call to fetch using the search query
         results = Search(songName if songUrl is None else songUrl).results
@@ -22,7 +24,7 @@ async def videoSearch(songName, songUrl, video=False, res=480):
             description = "" if song.description is None else song.description
             if video is True:
                 filtered = (
-                    song.streams.filter(progressive=True, file_extension="mp4")
+                    song.streams.filter(file_extension="mp4")
                     .order_by("resolution")
                     .desc()
                 )
@@ -36,12 +38,12 @@ async def videoSearch(songName, songUrl, video=False, res=480):
             for f in filtered:
                 if video is True and f.resolution is not None:
                     resolution = re.findall("\d+", f.resolution)
-                    if len(resolution) > 0 and int(res) <= int(resolution[0]):
+                    if len(resolution) > 0 and int(resolution[0]) <= int(res):
                         s_url, s_res = [f.url, f.resolution]
                         break
                 elif f.abr is not None:
                     resolution = re.findall("\d+", f.abr)
-                    if len(resolution) > 0 and int(res) <= int(resolution[0]):
+                    if len(resolution) > 0 and int(resolution[0]) <= int(res):
                         s_url, s_res = [f.url, f.abr]
                         break
 
@@ -52,7 +54,7 @@ async def videoSearch(songName, songUrl, video=False, res=480):
                     "title": song.title,
                     "long_desc": description,
                     "channel": channelName,
-                    "duration": song.length,
+                    "duration": f"{song.length} sec",
                     "views": song.views,
                     "link": s_url,
                     "resolution": s_res,

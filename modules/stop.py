@@ -2,7 +2,13 @@ from pyrogram import Client, filters
 
 
 import callmanager
-from helpers.decorators import chat_allowed, delayDelete, admin_mode_check
+from helpers.decorators import (
+    chat_allowed,
+    delayDelete,
+    admin_mode_check,
+    send_message,
+    parsePlayCommand,
+)
 from utils.Logger import *
 
 
@@ -16,14 +22,20 @@ async def stop(client, message, current_client):
         chat_id = message.chat.id
         logInfo(f"Stop command in chat : {chat_id}")
 
+        parsed_command = parsePlayCommand(
+            message.text, current_client.get("is_admin", False)
+        )
         music_player_instance = callmanager.MusicPlayer()
         pytgcalls_instance, err_message = music_player_instance.createGroupCallInstance(
             chat_id, current_client, client
         )
         if pytgcalls_instance is None:
-            m = await client.send_message(message.chat.id, f"{err_message}")
+            m = await send_message(
+                client, message.chat.id, f"{err_message}", parsed_command["is_silent"]
+            )
             if (
-                current_client.get("remove_messages") is not None
+                m is not None
+                and current_client.get("remove_messages") is not None
                 and current_client.get("remove_messages") > 0
             ):
                 await delayDelete(m, current_client.get("remove_messages"))
@@ -31,9 +43,12 @@ async def stop(client, message, current_client):
 
         status, resp_message = await pytgcalls_instance.stopPlayBack(False, False)
 
-        m = await client.send_message(message.chat.id, f"{resp_message}")
+        m = await send_message(
+            client, message.chat.id, f"{resp_message}", parsed_command["is_silent"]
+        )
         if (
-            current_client.get("remove_messages") is not None
+            m is not None
+            and current_client.get("remove_messages") is not None
             and current_client.get("remove_messages") > 0
         ):
             await delayDelete(m, current_client.get("remove_messages"))

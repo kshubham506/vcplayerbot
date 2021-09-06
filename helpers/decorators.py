@@ -6,10 +6,13 @@ from pyrogram.types import Message
 from utils.Logger import *
 from utils.Config import Config
 from utils.MongoClient import MongoDBClient
+from utils.Helper import Helper
 from helpers.fromatMessages import getMessage
+import re
 
 config = Config()
 MongoDBClient = MongoDBClient()
+helper = Helper()
 
 
 def errors(func: Callable) -> Callable:
@@ -42,12 +45,59 @@ def hasRequiredPermission(user):
         return False
 
 
-async def delayDelete(message, delay):
+def parsePlayCommand(command, is_admin=False):
+    is_video = helper.checkForArguments(command, "IS_VIDEO")
+    resolution = helper.checkForArguments(command, "RES")
+    if resolution is None:
+        resolution = 256 if is_video is False else 480
+    song_name = helper.checkForArguments(command, "NAME")
+    is_repeat = helper.checkForArguments(command, "REPEAT")
+    is_silent = helper.checkForArguments(command, "SILENT")
+    _urls = helper.getUrls(song_name)
+    is_url = len(_urls) > 0
+    song_url = _urls[0] if is_url is True else None
+    is_youtube = (
+        True
+        if (
+            is_url is False
+            or (
+                is_url is True
+                and re.search("youtube\.|youtu\.be|youtube-nocookie\.", song_url)
+            )
+        )
+        else False
+    )
+
+    return {
+        "is_video": is_video,
+        "resolution": resolution,
+        "is_youtube": is_youtube,
+        "is_url": is_url,
+        "song_url": song_url,
+        "song_name": song_name,
+        "is_repeat": is_repeat is True,
+        "is_silent": is_silent is True and is_admin is True,
+    }
+
+
+async def delayDelete(message, delay=1):
     try:
         await asyncio.sleep(delay)
         await message.delete()
     except Exception as ex:
         logException("Error while deleteing message : {message} , {ex}", True)
+
+
+async def send_message(client, chat_id, message, is_silent):
+    if is_silent is True:
+        return None
+    return await client.send_message(chat_id, message)
+
+
+async def edit_sent_message(sent_message, message, is_silent):
+    if sent_message is None or is_silent is True:
+        return None
+    return await sent_message.edit(message)
 
 
 def chat_allowed(func: Callable) -> Callable:
@@ -88,7 +138,7 @@ def chat_allowed(func: Callable) -> Callable:
                     reply_markup=kbd,
                 )
 
-            # if databse url is not present then simply return the current chat as client
+            # if database url is not present then simply return the current chat as client
             if MongoDBClient.client is None:
                 current_client = {
                     "chat_id": message.chat.id,
@@ -110,7 +160,7 @@ def chat_allowed(func: Callable) -> Callable:
                 logInfo(f"Adding a new client in db => {message.chat.id}")
                 state_value = True
                 # if the service is running in single mode , check if there are any active clients , if yes restrict the chat from proceeding
-                # if not add the chta and allow it
+                # if not add the chat and allow it
                 if (
                     config.get("MODE") == "single"
                     and len(
@@ -173,6 +223,7 @@ def admin_check(func: Callable) -> Callable:
                 a["chat_id"] for a in admins
             ]:
                 current_client = config.fetchClient(message.chat.id)
+                current_client["is_admin"] = True
                 return await func(client, message, current_client)
             else:
                 logWarning(
@@ -197,11 +248,13 @@ def admin_mode_check(func: Callable) -> Callable:
                 current_client is not None
                 and current_client.get("admin_mode") is not True
             ):
+                current_client["is_admin"] = True
                 return await func(client, message, current_client)
             admins = config.getAdminForChat(chat_id)
             if message.from_user is None or message.from_user.id in [
                 a["chat_id"] for a in admins
             ]:
+                current_client["is_admin"] = True
                 return await func(client, message, current_client)
 
             logWarning(
@@ -226,7 +279,7 @@ def database_check(func: Callable) -> Callable:
             if MongoDBClient.client is None:
                 m = await client.send_message(
                     message.chat.id,
-                    f"**__This action is allowed only if mongo databse url is provided in env parameter.__**",
+                    f"**__This action is allowed only if mongo database url is provided in env parameter.__**",
                 )
                 await delayDelete(m, 10)
             return await func(client, message)
