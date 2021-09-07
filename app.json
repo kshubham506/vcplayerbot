@@ -44,10 +44,6 @@
         "MODE": {
             "description": "Default is multiple, which means bot will be allowed only in one group. Allowed [single, multiple]",
             "required": false
-        },
-        "AUTO_LEAVE": {
-            "description": "False by default. Allows the user bot to leave the grp at regualr intervals automatically. Allowed [on, off]",
-            "required": false
         }
     },
     "formation": {

@@ -25,6 +25,9 @@ async def stop(client, message, current_client):
         parsed_command = parsePlayCommand(
             message.text, current_client.get("is_admin", False)
         )
+        if parsed_command["is_silent"] is True:
+            await delayDelete(message)
+
         music_player_instance = callmanager.MusicPlayer()
         pytgcalls_instance, err_message = music_player_instance.createGroupCallInstance(
             chat_id, current_client, client

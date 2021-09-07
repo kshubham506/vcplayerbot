@@ -108,7 +108,7 @@ async def play(client, message, current_client):
         sent_msg = await send_message(
             client,
             message.chat.id,
-            f"**__👀 Fetching song details... __**",
+            f"**__👀 Fetching {'video' if parsed_command['is_video'] is True else 'audio'} details... __**",
             parsed_command["is_silent"],
         )
         if parsed_command["is_youtube"] is True:
@@ -143,6 +143,7 @@ async def play(client, message, current_client):
                     "duration": None,
                     "views": None,
                     "link": parsed_command["song_url"],
+                    "audio_link": None,
                     "resolution": "Default",
                     "is_video": True,
                 }
@@ -151,6 +152,7 @@ async def play(client, message, current_client):
         if songDetails is not None and len(songDetails) > 0:
             song_info = songDetails[0]
             song_info["is_repeat"] = parsed_command["is_repeat"]
+            song_info["only_audio"] = parsed_command["only_audio"]
 
             cover_file_name = None
             # generate thumbnail only if the song is first one and not for queue

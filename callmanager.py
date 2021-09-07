@@ -81,14 +81,15 @@ class GoupCallInstance(object):
                 pass
             try:
                 await self.pytgcalls.join(self.chat_id)
-                if songInfo["is_video"] is False:
+                if songInfo["is_video"] is False or songInfo["only_audio"] is True:
                     await self.pytgcalls.start_audio(
                         songInfo["link"], repeat=songInfo["is_repeat"]
                     )
                 else:
-                    await self.pytgcalls.start_video(
-                        songInfo["link"], repeat=songInfo["is_repeat"]
-                    )
+                    if songInfo["audio_link"] is not None:
+                        await self.pytgcalls.start_video(
+                            songInfo["link"], repeat=songInfo["is_repeat"]
+                        )
             except GroupCallNotFoundError as ex:
                 msg, kbd = getMessage(None, "start-voice-chat")
                 return msg
@@ -118,15 +119,6 @@ class GoupCallInstance(object):
         try:
             self.logInfo(f"Stopping the playback : fromHandler : {fromHandler} ")
 
-            for s in self.songs:
-                try:
-                    if s.get("file") is not None and os.path.exists(s.get("file")):
-                        os.remove(s.get("file"))
-                except Exception as ex:
-                    self.logException(
-                        f"Error while removing the file : {s.get('file')}", True
-                    )
-
             self.songs = []
             self.active = False
             self.status = "stopped"
@@ -144,11 +136,9 @@ class GoupCallInstance(object):
                     )
 
             await asyncio.sleep(0.1)
-            resp_message = (
-                "__Playback ended, do give your feedback/suggestion @sktechhub_chat.__"
-            )
+            resp_message = "__Playback ended, do give your feedback/suggestion @voicechatsupport.__"
             if sendMessage is True and self.bot_client is not None:
-                resp_message = "**Playback ended `[If you were in middle of a song and you are getting this message then this has happended due to a deployement. You can play again after some time.]`**\n\n__Thank you for trying and do give your feedback/suggestion @sktechhub_chat.__"
+                resp_message = "**Playback ended `[If you were in middle of a song and you are getting this message then this has happended due to a deployement. You can play again after some time.]`**\n\n__Thank you for trying and do give your feedback/suggestion @voicechatsupport.__"
                 await self.bot_client.send_message(self.chat_id, f"{resp_message}")
             return True, resp_message
         except BotMethodInvalid as bi:

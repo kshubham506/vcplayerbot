@@ -26,5 +26,5 @@ Pillow
 aiofiles
 aiohttp
 asyncio
-pytgcalls==3.0.0.dev14
+pytgcalls==3.0.0.dev15
 git+https://github.com/pytube/pytube

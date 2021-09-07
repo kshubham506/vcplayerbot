@@ -7,8 +7,12 @@ Config = Config()
 
 def getMessage(message, action):
     try:
-        ALLOWED_CHAT_TYPES = config.get("ALLOWED_CHAT_TYPES")
-
+        extra_options = {
+            "-video": "Stream the video file in video chat.",
+            "-repeat": "Play the song/video in repeat mode.",
+            "-audio": "Stream just the audio.",
+            "-res720": "Stream the audio/video in the provided quality/resolution.",
+        }
         if action == "private-chat":
             send_message = f"**Hi 🎵 {message.chat.first_name if hasattr(message.chat, 'first_name') else 'User'}**"
             send_message = (
@@ -31,6 +35,8 @@ def getMessage(message, action):
                 helpMessage
                 + f"\n\n• **/play song name/song url : ** __Start a song / add to queue.__"
             )
+            for k, v in extra_options.items():
+                helpMessage = helpMessage + f"\n\t\t\t\t- **{k} : ** __{v}__"
             helpMessage = helpMessage + f"\n• **/stop : ** __Stop the playback.__"
             helpMessage = (
                 helpMessage + f"\n• **/refreshadmins : ** __Refreshes the admin list.__"
@@ -60,7 +66,7 @@ def getMessage(message, action):
             send_message = f"**😖 Sorry but this chat is not yet allowed to access the service. You can always check the demo in [Support Group]({config.get('SUPPORT_GROUP')}).**"
             send_message = (
                 send_message
-                + f"\n\n**Why ❓**\n- __Due to high usage we have restrcited the usage of the bot in just our [Support Group]({config.get('SUPPORT_GROUP')}) __"
+                + f"\n\n**Why ❓**\n- __Due to high usage we have restricted the usage of the bot in just our [Support Group]({config.get('SUPPORT_GROUP')}) __"
             )
             send_message = (
                 send_message

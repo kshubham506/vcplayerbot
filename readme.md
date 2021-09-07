@@ -46,7 +46,7 @@ Official Bot : [VCPlayerBot](https://telegram.me/vcplayerbot)   |   Discussion G
 # Environmental Variables
 
 Starting from command line:
-- python3 main.py -env `prod|local` -mode `single|multiple` -autoleave `on|off`
+- python3 main.py -env `prod|local` -mode `single|multiple` 
 
 Available env varibales
 - `Mandataory` **API_ID** :  get it from my.telegram.org
@@ -55,7 +55,6 @@ Available env varibales
 - `Mandataory` **USERBOT_SESSION** : user bot pyrogram session string, generate it using the `generateSession.py` file present in the root directory of repo.
 - `Optional` **MONGO_URL** : connection url for mongo databse. needed if you wnat to run the service in single mode
 - `Optional` **MODE** : _single|multiple_ single mode means bot will be allowed only in one group, multiple means allowed in multiple groups. It is `multiple` by default. If you want to run in single mode then `MONGO_URL` is must.
-- `Optional` **AUTO_LEAVE** : _on|off_ turning this on will make the user bot to leave the grp automatically at regular intervals. It is `off` by default.
 
 # Features
 Command | Description

@@ -6,7 +6,7 @@ import sys
 import asyncio
 from utils.Logger import *
 import os
-from dbhandler import handle_db_calls, leaveStaleChats
+from dbhandler import handle_db_calls
 import time
 import threading
 import schedule
@@ -80,13 +80,6 @@ def removeOldFiles():
         return []
 
 
-def removeStaleClientsScheduler(loop):
-    try:
-        loop.create_task(leaveStaleChats())
-    except Exception as ex:
-        logException(f"Error in removeStaleClientsScheduler : {ex}")
-
-
 """
 method to run scheduler jobs in thread
 """
@@ -115,9 +108,6 @@ def main():
 
         if config.get("env") == "prod":
             schedule.every(3).hours.do(run_threaded, removeOldFiles, ())
-            # make user bot leave stale chats only if auto leave mode is on
-            if config.get("AUTO_LEAVE") == "on":
-                schedule.every(6).hours.do(removeStaleClientsScheduler, loop)
         else:
             pass
             # schedule.every(10).seconds.do(removeStaleClientsScheduler, loop)

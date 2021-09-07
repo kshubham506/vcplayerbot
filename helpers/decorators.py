@@ -53,6 +53,7 @@ def parsePlayCommand(command, is_admin=False):
     song_name = helper.checkForArguments(command, "NAME")
     is_repeat = helper.checkForArguments(command, "REPEAT")
     is_silent = helper.checkForArguments(command, "SILENT")
+    only_audio = helper.checkForArguments(command, "ONLY_AUDIO")
     _urls = helper.getUrls(song_name)
     is_url = len(_urls) > 0
     song_url = _urls[0] if is_url is True else None
@@ -77,6 +78,7 @@ def parsePlayCommand(command, is_admin=False):
         "song_name": song_name,
         "is_repeat": is_repeat is True,
         "is_silent": is_silent is True and is_admin is True,
+        "only_audio": only_audio is True,
     }
 
 

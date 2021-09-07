@@ -33,6 +33,8 @@ class Helper:
                 return re.search(" -repeat", command) is not None
             elif arg == "SILENT":
                 return re.search(" -silent", command) is not None
+            elif arg == "ONLY_AUDIO":
+                return re.search(" -audio", command) is not None
             elif arg == "RES":
                 res = re.findall(" -res\w+", command)
                 if len(res) > 0:
@@ -40,7 +42,7 @@ class Helper:
                     return quality[0] if len(quality) > 0 else None
             elif arg == "NAME":
                 return re.sub(
-                    "\/play|-video|-repeat|-silent|-res\w+", "", command
+                    "\/play|-video|-repeat|-silent|audio|-res\w+", "", command
                 ).strip()
             else:
                 raise Exception("Invalid arg")

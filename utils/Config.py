@@ -16,11 +16,6 @@ class Config(metaclass=Singleton):
             "--Mode",
             help="[optional]Provide service mode (single/multiple). single [to restrict which chat can add your bot] , multiple [to allow any chat to add the bot]",
         )
-        parser.add_argument(
-            "-autoleave",
-            "--AutoLeave",
-            help="[optional]Provide AutoLeave Mode For UserBot (on/off). on [to make the user bot leave stale chat iteself] or off [to do nothing regarding stale chats]",
-        )
         return parser
 
     def __init__(self) -> None:
@@ -46,6 +41,7 @@ class Config(metaclass=Singleton):
         self.config["server"] = "tgserver"
 
         self.config["ALLOWED_CHAT_TYPES"] = [
+            "channel",
             "groups",
             "group",
             "supergroup",
@@ -91,23 +87,6 @@ class Config(metaclass=Singleton):
             print("Switchign to multiple mode as MONGO_URL is empty.")
             self.config["MODE"] = "multiple"
 
-        if "AUTO_LEAVE" not in self.config or self.config["AUTO_LEAVE"].lower() not in [
-            "on",
-            "off",
-        ]:
-            print(f"ENV AUTO_LEAVE provided is invalid, using off by default")
-            self.config["AUTO_LEAVE"] = "off"
-        else:
-            self.config["AUTO_LEAVE"] = self.config["AUTO_LEAVE"].lower()
-        if self.args.AutoLeave is not None:
-            if self.args.AutoLeave.lower() not in ["on", "off"]:
-                print(
-                    f"AUTO_LEAVE must be either on [to make the user bot leave stale chat iteself] or off [to do nothing regarding stale chats]"
-                )
-                exit()
-            self.config["AUTO_LEAVE"] = self.args.AutoLeave.lower()
-        print(f"Starting in AUTO_LEAVE : {self.config['AUTO_LEAVE']} ")
-
         if self.config["ALLOWED_SONG_DURATION_IN_MIN"] is None:
             self.config["ALLOWED_SONG_DURATION_IN_MIN"] = 15
 
@@ -134,9 +113,6 @@ class Config(metaclass=Singleton):
 
     def save_playback_footer(self, value):
         self.config["PLAYBACK_FOOTER"] = value
-
-    def set_auto_leave_mode(self, value):
-        self.config["AUTO_LEAVE"] = value
 
     def save_playlist_size(self, value):
         self.config["PLAYLIST_SIZE"] = value

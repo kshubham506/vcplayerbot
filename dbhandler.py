@@ -31,8 +31,6 @@ async def handle_db_calls():
                     config.save_playback_footer(run_data.get("playback_footer"))
                 else:
                     config.save_playback_footer("")
-                if run_data.get("auto_leave") in ["on", "off"]:
-                    config.set_auto_leave_mode(run_data.get("auto_leave"))
             else:
                 logWarning("DB handler runtime data is none")
 
@@ -49,27 +47,3 @@ async def handle_db_calls():
                 await asyncio.sleep(5)
             else:
                 await asyncio.sleep(60)
-
-
-async def leaveStaleChats():
-    try:
-        left = []
-        failed = []
-        distinct_docs = mongo_client.chats_to_disconnect()
-        for chat in distinct_docs:
-            try:
-                chat_id = None
-                c = chat.get("chat")
-                if c is not None:
-                    chat_id = c.get("chat_id")
-                    await user_app.leave_chat(chat_id)
-                    left.append(chat_id)
-                    await asyncio.sleep(5)
-            except UserNotParticipant as e:
-                left.append(chat_id)
-            except Exception as ex:
-                failed.append(chat_id)
-                logWarning(f"Error in leave chat inside loop {ex}")
-        logException(f"Left the chats : Done {left} , Failed : {failed} ")
-    except Exception as ex:
-        logException(f"Error in leaveStaeChats , {ex}", True)
