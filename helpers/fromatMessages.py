@@ -9,9 +9,10 @@ def getMessage(message, action):
     try:
         extra_options = {
             "-video": "Stream the video file in video chat.",
-            "-repeat": "Play the song/video in repeat mode.",
             "-audio": "Stream just the audio.",
+            "-repeat": "Play the song/video in repeat mode.",
             "-res720": "Stream the audio/video in the provided quality/resolution.",
+            "-silent": "Silently play the requested file/url.",
         }
         if action == "private-chat":
             send_message = f"**Hi 🎵 {message.chat.first_name if hasattr(message.chat, 'first_name') else 'User'}**"
