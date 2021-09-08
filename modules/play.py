@@ -153,6 +153,7 @@ async def play(client, message, current_client):
             song_info = songDetails[0]
             song_info["is_repeat"] = parsed_command["is_repeat"]
             song_info["only_audio"] = parsed_command["only_audio"]
+            song_info["lip_sync"] = parsed_command["lip_sync"]
 
             cover_file_name = None
             # generate thumbnail only if the song is first one and not for queue

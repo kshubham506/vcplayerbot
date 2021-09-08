@@ -13,6 +13,7 @@ def getMessage(message, action):
             "-repeat": "Play the song/video in repeat mode.",
             "-res720": "Stream the audio/video in the provided quality/resolution.",
             "-silent": "Silently play the requested file/url.",
+            "-lipsync": "Use this if audio is not in sync with video",
         }
         if action == "private-chat":
             send_message = f"**Hi 🎵 {message.chat.first_name if hasattr(message.chat, 'first_name') else 'User'}**"

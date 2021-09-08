@@ -75,21 +75,17 @@ class GoupCallInstance(object):
                 f"Starting the playback in chat : video : {songInfo['is_video']}, url : {songInfo['link']}"
             )
             try:
-                if self.is_connected():
-                    await self.pytgcalls.stop()
-            except Exception as ex:
-                pass
-            try:
                 await self.pytgcalls.join(self.chat_id)
                 if songInfo["is_video"] is False or songInfo["only_audio"] is True:
                     await self.pytgcalls.start_audio(
                         songInfo["link"], repeat=songInfo["is_repeat"]
                     )
                 else:
-                    if songInfo["audio_link"] is not None:
-                        await self.pytgcalls.start_video(
-                            songInfo["link"], repeat=songInfo["is_repeat"]
-                        )
+                    await self.pytgcalls.start_video(
+                        songInfo["link"],
+                        repeat=songInfo["is_repeat"],
+                        enable_experimental_lip_sync=songInfo["lip_sync"],
+                    )
             except GroupCallNotFoundError as ex:
                 msg, kbd = getMessage(None, "start-voice-chat")
                 return msg

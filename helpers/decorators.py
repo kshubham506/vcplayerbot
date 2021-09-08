@@ -49,11 +49,12 @@ def parsePlayCommand(command, is_admin=False):
     is_video = helper.checkForArguments(command, "IS_VIDEO")
     resolution = helper.checkForArguments(command, "RES")
     if resolution is None:
-        resolution = 256 if is_video is False else 480
+        resolution = 128 if is_video is False else 480
     song_name = helper.checkForArguments(command, "NAME")
     is_repeat = helper.checkForArguments(command, "REPEAT")
     is_silent = helper.checkForArguments(command, "SILENT")
     only_audio = helper.checkForArguments(command, "ONLY_AUDIO")
+    lip_sync = helper.checkForArguments(command, "LIP_SYNC")
     _urls = helper.getUrls(song_name)
     is_url = len(_urls) > 0
     song_url = _urls[0] if is_url is True else None
@@ -79,6 +80,7 @@ def parsePlayCommand(command, is_admin=False):
         "is_repeat": is_repeat is True,
         "is_silent": is_silent is True and is_admin is True,
         "only_audio": only_audio is True,
+        "lip_sync": lip_sync is True,
     }
 
 
