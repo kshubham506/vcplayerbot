@@ -123,7 +123,7 @@ class Config(metaclass=Singleton):
     def setHelperActId(self, value):
         self.config["HELPER_ACT_ID"] = value
 
-    def setHeleprActUserName(self, value):
+    def setHelperActUserName(self, value):
         self.config["HELPER_ACT"] = value
 
     def fetchClient(self, chat_id):

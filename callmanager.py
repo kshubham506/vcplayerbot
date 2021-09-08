@@ -22,17 +22,17 @@ from utils.Config import Config
 from utils.MongoClient import MongoDBClient
 from pyrogram.raw.functions.phone import LeaveGroupCall
 from pyrogram.raw.functions.channels import GetFullChannel
-
+from pyrogram.raw.functions.phone import EditGroupCallTitle
 
 config = Config()
 MongoDBClient = MongoDBClient()
 
 
-user_app = Client(
-    config.get("USERBOT_SESSION"),
-    api_id=config.get("API_ID"),
-    api_hash=config.get("API_HASH"),
-)
+# user_app = Client(
+#     config.get("USERBOT_SESSION"),
+#     api_id=config.get("API_ID"),
+#     api_hash=config.get("API_HASH"),
+# )
 
 
 class Singleton(type):
@@ -45,8 +45,8 @@ class Singleton(type):
 
 
 class GoupCallInstance(object):
-    def __init__(self, chat_id, mongo_doc, client=None):
-        self.client = user_app
+    def __init__(self, chat_id, mongo_doc, client=None, user_app_client=None):
+        self.client = user_app_client  # user_app
         self.bot_client = client
         self.mongo_doc = mongo_doc
         self.chat_id = chat_id
@@ -97,6 +97,17 @@ class GoupCallInstance(object):
                 self.logException(f"Error while starting the playback: {e}", True)
                 return f"✖️ **Error while starting the playback:** __{e}__"
 
+            # edit group call title
+            try:
+                input_peer = await self.client.resolve_peer(self.chat_id)
+                chat = await self.client.send(GetFullChannel(channel=input_peer))
+                title_change = EditGroupCallTitle(
+                    call=chat.full_chat.call, title="VC Player | By SkTechHub"
+                )
+                await self.client.send(title_change)
+            except Exception as ex:
+                logWarning(f"Unable to change group call title ")
+
             self.songs.append(
                 {
                     "song": songInfo,
@@ -143,6 +154,8 @@ class GoupCallInstance(object):
         except Exception as ex:
             self.logException(f"Error while stopping the playback: {ex}", True)
             return False, f"**__Error while stopping : {ex}__**"
+        finally:
+            await self.client.stop()
 
 
 class MusicPlayer(metaclass=Singleton):
@@ -163,7 +176,7 @@ class MusicPlayer(metaclass=Singleton):
         except Exception as ex:
             logException(f"Error in cleanTheGroupCallDict {ex}", True)
 
-    def createGroupCallInstance(self, chat_id, mongo_doc, client, force=False):
+    async def createGroupCallInstance(self, chat_id, mongo_doc, client, force=False):
         try:
             logInfo(
                 f"Call for Creating new group call instance : {chat_id} {len(self.group_calls)}"
@@ -186,7 +199,13 @@ class MusicPlayer(metaclass=Singleton):
                 logInfo(
                     f"Creating new group call instance : {chat_id} {len(self.group_calls)}"
                 )
-                gc = GoupCallInstance(chat_id, mongo_doc, client)
+                user_app = Client(
+                    config.get("USERBOT_SESSION"),
+                    api_id=config.get("API_ID"),
+                    api_hash=config.get("API_HASH"),
+                )
+                await user_app.start()
+                gc = GoupCallInstance(chat_id, mongo_doc, client, user_app)
                 self.group_calls[chat_id] = gc
                 return gc, ""
 

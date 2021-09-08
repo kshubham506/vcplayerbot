@@ -1,6 +1,6 @@
 from pyrogram import Client, idle
 from utils.Config import Config
-from callmanager import MusicPlayer, user_app
+from callmanager import MusicPlayer  # , user_app
 import signal
 import sys
 import asyncio
@@ -135,14 +135,14 @@ def main():
             logWarning("Not implemented error : ")
 
         bot.start()
-        user_app.start()
+        # user_app.start()
 
         bot_details = bot.get_me()
-        user_app_details = user_app.get_me()
+        # user_app_details = user_app.get_me()
 
         config.setBotId(bot_details.id)
-        config.setHelperActId(user_app_details.id)
-        config.setHeleprActUserName(user_app_details.username)
+        # config.setHelperActId(user_app_details.id)
+        # config.setHelperActUserName(user_app_details.username)
 
         loop.create_task(handle_db_calls())
 
@@ -155,8 +155,8 @@ def main():
         logException(f"Closed the service :)", True)
         if bot is not None:
             bot.stop()
-        if user_app is not None:
-            user_app.stop()
+        # if user_app is not None:
+        #     user_app.stop()
 
 
 if __name__ == "__main__":

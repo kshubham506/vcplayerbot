@@ -17,8 +17,7 @@ from utils.Config import Config
 from helpers.fromatMessages import getMessage
 from helpers.GenerateCover import generate_cover, generate_blank_cover
 import uuid
-from pyrogram.raw.functions.phone import EditGroupCallTitle
-from pyrogram.raw.functions.channels import GetFullChannel
+
 
 helper = Helper()
 
@@ -90,7 +89,10 @@ async def play(client, message, current_client):
             return
 
         music_player_instance = callmanager.MusicPlayer()
-        pytgcalls_instance, err_message = music_player_instance.createGroupCallInstance(
+        (
+            pytgcalls_instance,
+            err_message,
+        ) = await music_player_instance.createGroupCallInstance(
             chat_id, current_client, client
         )
         if pytgcalls_instance is None:
@@ -207,18 +209,6 @@ async def play(client, message, current_client):
             req_by = (
                 f"[{requested_by['title']}](tg://user?id={requested_by['chat_id']})"
             )
-            # edit group call title
-            try:
-                input_peer = await callmanager.user_app.resolve_peer(message.chat.id)
-                chat = await callmanager.user_app.send(
-                    GetFullChannel(channel=input_peer)
-                )
-                title_change = EditGroupCallTitle(
-                    call=chat.full_chat.call, title="VC Player | By SkTechHub"
-                )
-                await callmanager.user_app.send(title_change)
-            except Exception as ex:
-                logWarning(f"Unable to change group call title : {ex}")
 
             if cover_file_name is not None and os.path.exists(cover_file_name):
                 logInfo(f"Sending cover mesage in chat : {chat_id} : {cover_file_name}")

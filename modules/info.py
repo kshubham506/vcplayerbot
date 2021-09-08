@@ -31,7 +31,10 @@ async def info(client, message, current_client):
             forceCreate = True
 
         music_player_instance = callmanager.MusicPlayer()
-        pytgcalls_instance, err_message = music_player_instance.createGroupCallInstance(
+        (
+            pytgcalls_instance,
+            err_message,
+        ) = await music_player_instance.createGroupCallInstance(
             chat_id, current_client, client, forceCreate
         )
         if pytgcalls_instance is None:

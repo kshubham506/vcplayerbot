@@ -1,4 +1,3 @@
-from callmanager import user_app
 from utils.Logger import *
 import asyncio
 from utils.MongoClient import MongoDBClient

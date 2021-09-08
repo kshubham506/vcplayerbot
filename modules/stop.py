@@ -29,7 +29,10 @@ async def stop(client, message, current_client):
             await delayDelete(message)
 
         music_player_instance = callmanager.MusicPlayer()
-        pytgcalls_instance, err_message = music_player_instance.createGroupCallInstance(
+        (
+            pytgcalls_instance,
+            err_message,
+        ) = await music_player_instance.createGroupCallInstance(
             chat_id, current_client, client
         )
         if pytgcalls_instance is None:
