@@ -44,7 +44,9 @@ class Helper:
                     return quality[0] if len(quality) > 0 else None
             elif arg == "NAME":
                 return re.sub(
-                    "\/play|-video|-repeat|-silent|audio|lipsync|-res\w+", "", command
+                    "\/play@\w+|\/play|-video|-repeat|-silent|audio|lipsync|-res\w+",
+                    "",
+                    command,
                 ).strip()
             else:
                 raise Exception("Invalid arg")

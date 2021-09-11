@@ -26,5 +26,7 @@ Pillow
 aiofiles
 aiohttp
 asyncio
-pytgcalls==3.0.0.dev16
+pytgcalls==3.0.0.dev19
 git+https://github.com/pytube/pytube
+cachetools
+async-cache

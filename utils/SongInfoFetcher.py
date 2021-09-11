@@ -1,15 +1,12 @@
 import re
 from utils.Logger import *
-from utils.Helper import Helper
 import re
-from pytube import YouTube, Search
-
-helper = Helper()
+from pytube import Search
 
 
 async def videoSearch(songName, songUrl, video=False, res=480):
     try:
-        if helper.isEmpty(songName):
+        if not songName:
             return None
         logInfo(
             f"Making call to fetch song details for : {songName} -> url : {songUrl}"
