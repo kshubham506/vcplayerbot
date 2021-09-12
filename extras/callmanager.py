@@ -51,7 +51,7 @@ class GroupCallInstance(object):
         self.bot_client: Client = bot_client
         self.client_doc = client_doc
         self.chat_id = chat_id
-        self.active = True
+        self.active = False
         self.pytgcalls = GroupCallFactory(
             self.user_app_client, GroupCallFactory.MTPROTO_CLIENT_TYPE.PYROGRAM
         ).get_group_call()
@@ -73,7 +73,7 @@ class GroupCallInstance(object):
     async def set_pause_playback(self, pause=True):
         resp_msg = None
         try:
-            self.pytgcalls.set_pause(pause)
+            await self.pytgcalls.set_pause(pause)
             resp_msg = f"✅ __Successfully {'Paused' if pause is True else 'Resumed'} the playback.__"
         except Exception as ex:
             self.logException(f"Error in set_pause_playback : {ex}")
@@ -192,6 +192,7 @@ class GroupCallInstance(object):
                         with_audio=True,
                         enable_experimental_lip_sync=songInfo["lip_sync"],
                     )
+                self.active = True
             except GroupCallNotFoundError as ex:
                 msg, kbd = getMessage(None, "start-voice-chat")
                 await self.stop_playback(False, False, True)
@@ -238,9 +239,8 @@ class GroupCallInstance(object):
                 )
             else:
                 await delete_message(fetching_media_msg)
-                resp_msg = (
-                    f"__✅ Added to queue.__\n\n**Name:** `{(songInfo['title'].strip())[:20]}`\n**Requester:** {req_by}\n**Media in queue:** `{queues.size(self.chat_id)}`",
-                )
+                resp_msg =     f"__✅ Added to queue.__\n\n**Name:** `{(songInfo['title'].strip())[:20]}`\n**Requester:** {req_by}\n**Media in queue:** `{queues.size(self.chat_id)}`",
+                
         except Exception as ex:
             self.logException(f"Error in add_to_queue: {ex}")
             resp_msg = f"✖️ __Error while adding song in the queue : {ex}.__"

@@ -31,9 +31,9 @@ class Config(metaclass=Singleton):
             }
             self.config["env"] = "local"
 
-        self.config["source"] = "tgcalls"
+        self.config["source"] = "tgcalls-beta"
 
-        self.config["server"] = "tgserver"
+        self.config["server"] = "tgserver-beta"
 
         self.config["ALLOWED_CHAT_TYPES"] = [
             "channel",
