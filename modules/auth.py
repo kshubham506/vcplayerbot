@@ -4,7 +4,7 @@ from decorators.message_factory import getMessage
 from pyrogram import Client, filters
 
 from utils import logger, mongoDBClient, loop, config, logWarning, logInfo
-from decorators.extras import delayDelete
+from decorators.extras import delayDelete, validate_session_string
 
 
 def validate_command(parsed_command, auth_docs, filtered_chat):
@@ -20,23 +20,6 @@ def validate_command(parsed_command, auth_docs, filtered_chat):
     if not filtered_chat:
         return f"__Invalid uuid: {uuid}. Send /auth to view the correct steps."
     return None
-
-
-async def validate_session_string(api_id, api_hash, session_string):
-    try:
-        user_app = Client(
-            session_string,
-            api_id=api_id,
-            api_hash=api_hash,
-        )
-        await user_app.start()
-        me = user_app.get_me()
-        logInfo(f"validated user: {user_app.get_me()}")
-        await user_app.stop()
-        return True, "", me.id, me.username
-    except Exception as ex:
-        logException(f"Error in validate_session_string : {ex}")
-        return False, str(ex), "", ""
 
 
 @Client.on_message(
@@ -65,7 +48,7 @@ async def auth(client, message, current_client):
                     message.chat.id, f"{msg}", disable_web_page_preview=True
                 )
             else:
-                status, reason, id, username = await validate_session_string(
+                status, reason, _user, id, username = await validate_session_string(
                     api_id, api_hash, session_string
                 )
                 if status is True:

@@ -1,7 +1,8 @@
 import asyncio
+from pyrogram.types import Message
 from utils.Logger import logException
 from cache import AsyncTTL
-from utils import logger, config, helperClient
+from utils import logger, config, helperClient, logInfo
 import re
 from pyrogram import Client
 
@@ -21,6 +22,26 @@ def hasRequiredPermission(user):
         return len(not_present) == 0
     except Exception as ex:
         logException(f"Error in hasRequiredPermission : {ex}")
+
+
+async def validate_session_string(api_id, api_hash, session_string, getUser=False):
+    try:
+        user_app = Client(
+            session_string,
+            api_id=api_id,
+            api_hash=api_hash,
+        )
+        await user_app.start()
+        me = await user_app.get_me()
+        logInfo(f"validated user: {me}")
+        if getUser is False:
+            await user_app.stop()
+            return True, "", None, me.id, me.username
+        else:
+            return True, "", user_app, me.id, me.username
+    except Exception as ex:
+        logException(f"Error in validate_session_string : {ex}")
+        return False, str(ex), None, "", ""
 
 
 @AsyncTTL(time_to_live=20, maxsize=1024)
@@ -78,6 +99,27 @@ async def delayDelete(message, delay=1):
         await message.delete()
     except Exception as ex:
         logException("Error in delayDelete : {ex}")
+
+
+async def send_message(client: Client, chat_id, message):
+    try:
+        await client.send_message(chat_id, message)
+    except Exception as ex:
+        logException("Error in send_message : {ex}")
+
+
+async def send_photo(client: Client, chat_id, photo, caption):
+    try:
+        await client.send_photo(chat_id, photo=photo, caption=caption)
+    except Exception as ex:
+        logException("Error in send_photo : {ex}")
+
+
+async def edit_message(sent_message: Message, message):
+    try:
+        await sent_message.edit(message)
+    except Exception as ex:
+        logException("Error in edit_message : {ex}")
 
 
 def parseIncomingCommand(command, max_video_res=None, max_audio_res=None):

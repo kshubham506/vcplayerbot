@@ -3,6 +3,9 @@ from utils.Config import Config
 from utils.Logger import logException, logWarning, logInfo, logger
 from utils.MongoClient import MongoDBClient
 from utils.Helper import Helper
+from utils.Singleton import Singleton
+from utils.SongInfoFetcher import VideoSearch
+from utils.GenerateCover import generate_blank_cover, generate_cover
 
 config = Config()
 mongoDBClient = MongoDBClient()
@@ -17,4 +20,8 @@ __all__ = [
     "logInfo",
     "logger",
     "loop",
+    "Singleton",
+    "VideoSearch",
+    "generate_blank_cover",
+    "generate_cover",
 ]

@@ -8,7 +8,7 @@ from extras import music_player
 
 
 @Client.on_message(
-    filters.command(["stop", "stop@vcplayerbot"])
+    filters.command(["skip", "skip@vcplayerbot"])
     & ~filters.edited
     & ~filters.bot
     & ~filters.private
@@ -16,17 +16,17 @@ from extras import music_player
 @save_user_chat_in_db
 @is_bot_admin
 @validate_command_pre_check
-async def stop(client, message, current_client):
+async def skip(client, message, current_client):
     try:
         current_chat = message.chat
-        logInfo(f"Stop command in chat : {current_chat.id}")
+        logInfo(f"Skip command in chat : {current_chat.id}")
         (gc_instance, err_message,) = await music_player.createGroupCallInstance(
             current_chat.id, current_client, client
         )
         if gc_instance is None:
             await send_message(client, current_chat.id, f"{err_message}")
             return
-        await gc_instance.stop_playback(user_requested=True, send_reason_msg=False)
+        await gc_instance.skip_playback(user_requested=True)
     except Exception as ex:
-        await send_message(client, message.chat.id, f"__Error while stopping : {ex}__")
-        logException(f"Error in stop: {ex}", True)
+        await send_message(client, message.chat.id, f"__Error while skipping : {ex}__")
+        logException(f"Error in skipping: {ex}", True)

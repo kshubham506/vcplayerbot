@@ -58,6 +58,12 @@ def validate_command_pre_check(func: Callable) -> Callable:
                 and current_client.get("extras").get("allow_audio") is False
             ):
                 reason = f"Audio playback is disabled by admin."
+            elif (
+                isPlayCommand is True
+                and parsed_command["is_youtube"] is False
+                and current_client.get("extras").get("allow_others") is False
+            ):
+                reason = f"Only youtube playbacks are allowed in your account."
 
             if reason:
                 msg = f"😕__Sorry to break this to you, but you cannot access the bot due to below reason:__\n\n**__{reason}__**\n\n__Contact [Support Group]({config.get('SUPPORT_GROUP')}) for any queries.__"

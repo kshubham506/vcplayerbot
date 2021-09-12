@@ -1,10 +1,9 @@
 import re
 from utils.Logger import *
-import re
 from pytube import Search
 
 
-async def videoSearch(songName, songUrl, video=False, res=480):
+async def VideoSearch(songName, songUrl, video=False, res=480):
     try:
         if not songName:
             return None

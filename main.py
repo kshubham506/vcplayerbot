@@ -65,7 +65,7 @@ def main():
         config.setBotId(bot_details.id)
         config.setBotUsername(bot_details.username)
 
-        loop.create_task(handle_db_calls())
+        # loop.create_task(handle_db_calls())
 
         loop.run_forever()
     except KeyboardInterrupt as k:

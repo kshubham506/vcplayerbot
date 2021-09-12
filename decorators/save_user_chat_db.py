@@ -66,6 +66,8 @@ def save_user_chat_in_db(func: Callable) -> Callable:
                         "min_members": int(config.get("MIN_MEMBERS_REQUIRED")),
                         "allow_video": False,
                         "allow_audio": True,
+                        "allow_youtube": True,
+                        "allow_others": False,
                         "max_video_res": 360,
                         "max_audio_res": 150,
                         "max_duration": int(config.get("ALLOWED_SONG_DURATION_IN_SEC")),

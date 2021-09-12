@@ -66,10 +66,6 @@ class Config(metaclass=Singleton):
                 "SESSION_STRING_STEPS"
             ] = "https://github.com/kshubham506/vcplayerbot/blob/master/get_session_string.md"
 
-        # max number of songs/video that can be added to queue
-        if "PLAYLIST_SIZE" not in self.config:
-            self.config["PLAYLIST_SIZE"] = 10
-
         # minimum number of members required to access the bot
         if "MIN_MEMBERS_REQUIRED" not in self.config:
             self.config["MIN_MEMBERS_REQUIRED"] = 50
