@@ -40,13 +40,6 @@ def validate_command_pre_check(func: Callable) -> Callable:
                 "userBot"
             ).get("sessionId"):
                 reason = "You have not authorized the bot yet, send /start and ask **Group Admin** to tap on authorize button."
-
-            elif current_client.get("extras").get("min_members", 0) > 0:
-                num_members = await get_chat_member_count(client, current_chat.id)
-                current_client["num_members"] = num_members
-                required = current_client.get("extras").get("min_members", 0)
-                if num_members and num_members < required:
-                    reason = f"At least **{required}** members are required in the group/channel."
             elif (
                 isPlayCommand is True
                 and parsed_command["is_video"] is True
@@ -65,6 +58,12 @@ def validate_command_pre_check(func: Callable) -> Callable:
                 and current_client.get("extras").get("allow_others") is False
             ):
                 reason = f"Only youtube playbacks are allowed in your account."
+            elif current_client.get("extras").get("min_members", 0) > 0:
+                num_members = await get_chat_member_count(client, current_chat.id)
+                current_client["num_members"] = num_members
+                required = current_client.get("extras").get("min_members", 0)
+                if num_members and num_members < required:
+                    reason = f"At least **{required}** members are required in the group/channel."
 
             if reason:
                 msg = f"😕__Sorry to break this to you, but you cannot access the bot due to below reason:__\n\n**__{reason}__**\n\n__Contact [Support Group]({config.get('SUPPORT_GROUP')}) for any queries.__"

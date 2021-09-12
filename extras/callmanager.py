@@ -239,14 +239,14 @@ class GroupCallInstance(object):
                 )
             else:
                 await delete_message(fetching_media_msg)
-                resp_msg =     f"__✅ Added to queue.__\n\n**Name:** `{(songInfo['title'].strip())[:20]}`\n**Requester:** {req_by}\n**Media in queue:** `{queues.size(self.chat_id)}`",
-                
+                resp_msg = f"__✅ Added to queue.__\n\n**Name:** `{(songInfo['title'].strip())[:20]}`\n**Requester:** {req_by}\n**Media in queue:** `{queues.size(self.chat_id)}`"
+
         except Exception as ex:
             self.logException(f"Error in add_to_queue: {ex}")
             resp_msg = f"✖️ __Error while adding song in the queue : {ex}.__"
         finally:
             if resp_msg:
-                await send_message(self.bot_client, self.chat_id, f"{resp_msg}")
+                await send_message(self.bot_client, self.chat_id, resp_msg)
 
     async def skip_playback(self, user_requested=False):
         resp_msg = None
