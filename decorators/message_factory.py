@@ -94,6 +94,17 @@ def getMessage(message, action, errorMsg=""):
                 + f"\n• **/start : ** __Shows authorization steps (mandatory).__"
             )
             send_message = (
+                send_message
+                + f"\n• **/play media name|url  : ** __Plays the given media.__"
+            )
+            send_message = send_message + f"\n• **/stop : ** __Stop the playback.__"
+            send_message = send_message + f"\n• **/pause : ** __Pause the playback.__"
+            send_message = send_message + f"\n• **/resume : ** __Resume the playback.__"
+            send_message = (
+                send_message
+                + f"\n• **/skip : ** __Skip and play the next media waiting in queue.__"
+            )
+            send_message = (
                 send_message + f"\n• **/help : ** __Shows the available commands.__"
             )
             send_message = (
@@ -120,11 +131,11 @@ def getMessage(message, action, errorMsg=""):
             )
             send_message = (
                 send_message
-                + f"\n**1.** __To start a group chat, you can head over to your group’s description page.__"
+                + f"\n1. __To start a group chat, you can head over to your group’s description page.__"
             )
             send_message = (
                 send_message
-                + f"\n**2.** __Then tap the three-dot button next to Mute and Search start a Voice Chat.__"
+                + f"\n2. __Then tap the three-dot button next to Mute and Search start a Voice Chat.__"
             )
             return send_message, getReplyKeyBoard(message, action)
 

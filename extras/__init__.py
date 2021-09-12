@@ -1,5 +1,5 @@
 from extras.callmanager import MusicPlayer
-from extras.queues import queues
+from extras import queues
 
 music_player = MusicPlayer()
 __al__ = [

@@ -1,6 +1,6 @@
 import asyncio
-from pyrogram.types import Message
-from utils.Logger import logException
+from pyrogram.types import Message, Chat
+from utils.Logger import logException, logWarning
 from cache import AsyncTTL
 from utils import logger, config, helperClient, logInfo
 import re
@@ -26,14 +26,15 @@ def hasRequiredPermission(user):
 
 async def validate_session_string(api_id, api_hash, session_string, getUser=False):
     try:
+        logInfo(f"Starting to validate user: {api_id}, {api_hash}")
         user_app = Client(
             session_string,
-            api_id=api_id,
+            api_id=int(api_id),
             api_hash=api_hash,
         )
         await user_app.start()
         me = await user_app.get_me()
-        logInfo(f"validated user: {me}")
+        logInfo(f"validated session string: {me.id}")
         if getUser is False:
             await user_app.stop()
             return True, "", None, me.id, me.username
@@ -49,13 +50,24 @@ async def get_chat_member(client: Client, chat_id, bot_id):
     try:
         return await client.get_chat_member(chat_id, bot_id)
     except Exception as ex:
-        logException(f"Error in get_chat_member : {ex}")
+        logWarning(f"Error in get_chat_member : {ex} → {chat_id, bot_id}")
+
+
+@AsyncTTL(time_to_live=60, maxsize=1024)
+async def get_chat_details(client: Client, chat_id):
+    try:
+        chat_details: Chat = await client.get_chat(chat_id)
+        return chat_details
+    except Exception as ex:
+        logException(f"Error in get_chat_details : {ex}")
 
 
 @AsyncTTL(time_to_live=60, maxsize=1024)
 async def get_chat_member_count(client: Client, chat_id):
     try:
-        await client.get_chat_members_count(chat_id)
+        chat: Chat = await get_chat_details(client, chat_id)
+        return chat.members_count
+        # await client.get_chat_members_count(chat_id)
     except Exception as ex:
         logException(f"Error in get_chat_member_count : {ex}")
 
@@ -63,7 +75,7 @@ async def get_chat_member_count(client: Client, chat_id):
 @AsyncTTL(time_to_live=60, maxsize=1024)
 async def get_chat_member_list(client: Client, chat_id):
     try:
-        await client.get_chat_members(chat_id)
+        await client.get_chat_members(client, chat_id)
     except Exception as ex:
         logException(f"Error in get_chat_member_list : {ex}")
 
@@ -89,37 +101,52 @@ async def getAlladmins(client: Client, chat_id):
         ]
         return admins
     except Exception as ex:
-        logException("Error while fetching admins : {ex}")
+        logException(f"Error while fetching admins : {ex}")
         return []
 
 
 async def delayDelete(message, delay=1):
     try:
-        await asyncio.sleep(delay)
-        await message.delete()
+        if message is None:
+            return
+        else:
+            await asyncio.sleep(delay)
+            await message.delete()
     except Exception as ex:
-        logException("Error in delayDelete : {ex}")
+        logException(f"Error in delayDelete : {ex}")
+
+
+async def delete_message(message: Message):
+    try:
+        if message is not None and isinstance(message, Message):
+            await message.delete()
+    except Exception as ex:
+        logException(f"Error in delete_message : {ex}")
 
 
 async def send_message(client: Client, chat_id, message):
     try:
-        await client.send_message(chat_id, message)
+        return await client.send_message(
+            chat_id,
+            message,
+            disable_web_page_preview=True,
+        )
     except Exception as ex:
-        logException("Error in send_message : {ex}")
+        logException(f"Error in send_message : {ex}")
 
 
 async def send_photo(client: Client, chat_id, photo, caption):
     try:
-        await client.send_photo(chat_id, photo=photo, caption=caption)
+        return await client.send_photo(chat_id, photo=photo, caption=caption)
     except Exception as ex:
-        logException("Error in send_photo : {ex}")
+        logException(f"Error in send_photo : {ex}")
 
 
 async def edit_message(sent_message: Message, message):
     try:
-        await sent_message.edit(message)
+        return await sent_message.edit(message, disable_web_page_preview=True)
     except Exception as ex:
-        logException("Error in edit_message : {ex}")
+        logException(f"Error in edit_message : {ex}")
 
 
 def parseIncomingCommand(command, max_video_res=None, max_audio_res=None):
@@ -147,10 +174,10 @@ def parseIncomingCommand(command, max_video_res=None, max_audio_res=None):
             else False
         )
         switched = False
-        if is_video is False and max_audio_res and resolution > max_audio_res:
+        if is_video is False and max_audio_res and int(resolution) > max_audio_res:
             resolution = max_audio_res
             switched = True
-        elif is_video is True and max_video_res and resolution > max_video_res:
+        elif is_video is True and max_video_res and int(resolution) > max_video_res:
             resolution = max_video_res
             switched = True
 

@@ -73,7 +73,7 @@ class Config(metaclass=Singleton):
         # should other group be able to add the bot and use it
         # 0 - False , 1 - True
         if "ALLOW_MULTIPLE_CHATS" not in self.config:
-            self.config["ALLOW_MULTIPLE_CHATS"] = 1
+            self.config["ALLOW_MULTIPLE_CHATS"] = 0
 
     def get(self, key):
         return self.config.get(key)

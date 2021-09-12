@@ -36,12 +36,13 @@ def validate_command_pre_check(func: Callable) -> Callable:
                     if current_client.get("error")
                     else "Banned/Not allowed by admin."
                 )
-            elif not current_client.get("userBot") or current_client.get("userBot").get(
-                "sessionId"
-            ):
+            elif not current_client.get("userBot") or not current_client.get(
+                "userBot"
+            ).get("sessionId"):
                 reason = "You have not authorized the bot yet, send /start and ask **Group Admin** to tap on authorize button."
+
             elif current_client.get("extras").get("min_members", 0) > 0:
-                num_members = current_chat.members_count
+                num_members = await get_chat_member_count(client, current_chat.id)
                 current_client["num_members"] = num_members
                 required = current_client.get("extras").get("min_members", 0)
                 if num_members and num_members < required:
@@ -82,6 +83,9 @@ def validate_command_pre_check(func: Callable) -> Callable:
                         else "User"
                     ),
                     "is_sender_chat": False,
+                    "group_username": current_chat.username
+                    if hasattr(current_chat, "username")
+                    else None,
                 }
                 if message.from_user is not None
                 else {
@@ -90,6 +94,9 @@ def validate_command_pre_check(func: Callable) -> Callable:
                     if hasattr(message.chat, "title")
                     else "Chat",
                     "is_sender_chat": True,
+                    "group_username": current_chat.username
+                    if hasattr(current_chat, "username")
+                    else None,
                 }
             )
             current_client["requested_by"] = requested_by

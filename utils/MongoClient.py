@@ -14,10 +14,11 @@ class MongoDBClient(metaclass=Singleton):
         self.config = Config()
         self.client = pymongo.MongoClient(self.config.get("MONGO_URL"))
         self.tgcalls = self.client["tgcalls"]
+        self.sktechhub = self.client["sktechhub"]
 
     def fetchRunTimeData(self):
         try:
-            return self.tgcalls.runtime_data.find_one(
+            return self.sktechhub.runtime_data.find_one(
                 {"service": self.config.get("source")}
             )
         except Exception as ex:
@@ -70,6 +71,7 @@ class MongoDBClient(metaclass=Singleton):
             "chat_id": chat_id,
             "uuid": str(uuid.uuid4()).split("-")[-1],
             "time": int(time.time()),
+            "is_done": False,
         }
         self.tgcalls.tgcalls_temp_auth.insert_one(doc)
         return doc
@@ -78,44 +80,54 @@ class MongoDBClient(metaclass=Singleton):
     def get_temp_auths(self, user_id):
         return list(
             self.tgcalls.tgcalls_temp_auth.find(
-                {"user_id": user_id, "time": {"$gte": int(time.time()) - (15 * 60)}}
+                {
+                    "user_id": user_id,
+                    "is_done": False,
+                    "time": {"$gte": int(time.time()) - (15 * 60)},
+                }
             ).sort("time", pymongo.DESCENDING)
+        )
+
+    @logger.catch
+    def complete_temp_auth_doc(self, uuid):
+        self.tgcalls.tgcalls_temp_auth.find_one_and_update(
+            {"uuid": uuid}, {"$set": {"is_done": True}}
         )
 
     @logger.catch
     def save_user_bot_details(
         self, chat_id, user_id, user_name, api_id, api_hash, session_string
     ):
-        user_bot = (
-            {
-                "apidId": api_id,
-                "apiHash": api_hash,
-                "sessionId": session_string,
-                "userId": user_id,
-                "userName": user_name,
-            },
-        )
+        user_bot = {
+            "apiId": api_id,
+            "apiHash": api_hash,
+            "sessionId": session_string,
+            "userId": user_id,
+            "userName": user_name,
+        }
         return self.tgcalls.tgcalls_chats.find_one_and_update(
             {"chat_id": chat_id},
-            {"$set": {"userBot": user_bot}},
+            {"$push": {"userBot": user_bot}},
             return_document=ReturnDocument.AFTER,
         )
 
+    @logger.catch
     def add_song_playbacks(self, songInfo, requestedUser, docId):
-        try:
-            if self.config.get("env") == "prod":
-                self.tgcalls.tgcalls_playbacks.insert_one(
-                    {
-                        "tgcalls_chat": docId,
-                        "song": songInfo,
-                        "requested_by": requestedUser,
-                        "updated_at": datetime.now(),
-                    }
-                )
-        except Exception as ex:
-            logException(
-                f"Error in add_song_playbacks : {ex} , {songInfo}, {requestedUser}, {docId}"
-            )
+        songInfo = {
+            "title": songInfo["title"],
+            "link": songInfo["link"],
+            "resolution": songInfo["resolution"],
+            "is_video": songInfo["is_video"],
+            "is_youtube": songInfo["is_youtube"],
+        }
+        self.tgcalls.tgcalls_playbacks.insert_one(
+            {
+                "tgcalls_chat": docId,
+                "song": songInfo,
+                "requested_by": requestedUser,
+                "created_at": datetime.now(),
+            }
+        )
 
     def update_admins(self, chatId, admins):
         try:

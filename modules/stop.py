@@ -20,9 +20,10 @@ async def stop(client, message, current_client):
     try:
         current_chat = message.chat
         logInfo(f"Stop command in chat : {current_chat.id}")
-        (gc_instance, err_message,) = await music_player.createGroupCallInstance(
-            current_chat.id, current_client, client
-        )
+        (
+            gc_instance,
+            err_message,
+        ) = await music_player.getGroupCallInstance(current_chat.id)
         if gc_instance is None:
             await send_message(client, current_chat.id, f"{err_message}")
             return

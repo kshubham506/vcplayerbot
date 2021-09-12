@@ -6,7 +6,7 @@ pycodestyle
 git+https://github.com/pyrogram/pyrogram@master
 PySocks
 rsa
-TgCrypto==1.2.2
+TgCrypto
 requests
 requests-futures
 loguru

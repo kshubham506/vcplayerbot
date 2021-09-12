@@ -55,13 +55,7 @@ def save_user_chat_in_db(func: Callable) -> Callable:
                     "active": int(config.get("ALLOW_MULTIPLE_CHATS")) == 1,
                     "error": "",
                     "remove_messages": -1,
-                    "userBot": {
-                        "apidId": -1,
-                        "apiHash": "",
-                        "sessionId": "",
-                        "userId": "",
-                        "userName": "",
-                    },
+                    "userBot": [],
                     "extras": {
                         "min_members": int(config.get("MIN_MEMBERS_REQUIRED")),
                         "allow_video": False,
@@ -83,6 +77,12 @@ def save_user_chat_in_db(func: Callable) -> Callable:
                     user["chat_id"] == from_user.id for user in current_client["admins"]
                 )
                 current_client["is_admin"] = is_admin is True
+                if (
+                    current_client.get("userBot")
+                    and isinstance(current_client.get("userBot"), list)
+                    and len(current_client.get("userBot")) > 0
+                ):
+                    current_client["userBot"] = (current_client["userBot"])[-1]
 
             current_client["from_user"] = from_user
             current_client["from_chat"] = current_chat

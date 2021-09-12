@@ -12,13 +12,11 @@ async def handle_db_calls():
             if run_data is not None:
                 for item, value in run_data.items():
                     config.setExtraData(item, value)
-            else:
-                logWarning("DB handler runtime data is none")
             schedule.run_pending()
         except Exception as ex:
             logException(f"Error in handle_db_calls: {ex}", True)
         finally:
             if config.get("env") == "local":
-                await asyncio.sleep(20)
+                await asyncio.sleep(1 * 60)
             else:
-                await asyncio.sleep(5 * 60)
+                await asyncio.sleep(10 * 60)
