@@ -11,8 +11,14 @@ helperClient = Helper()
 
 timeName = datetime.now().strftime("%d-%m-%Y")
 fmt = "{time} | {level: <8} | {name: ^15} | {function: ^15} | {line: >3} | {message}"
-logger.add("Logs/log-{}.log".format(timeName), level='INFO',
-           format=fmt, rotation="1 days", retention="1 days", encoding="utf8")
+logger.add(
+    "Logs/log-{}.log".format(timeName),
+    level="INFO",
+    format=fmt,
+    rotation="1 days",
+    retention="1 days",
+    encoding="utf8",
+)
 logger.opt(lazy=True)
 
 
@@ -31,15 +37,22 @@ class InterceptHandler(logging.Handler):
             depth += 1
 
         logger.opt(depth=depth, exception=record.exc_info).log(
-            level, record.getMessage())
+            level, record.getMessage()
+        )
 
 
 logging.getLogger("filelock").setLevel(logging.ERROR)
 logging.basicConfig(handlers=[InterceptHandler()], level="INFO")
 
+# optional advanced feature, for sending logs to r7
 if config.get("env") == "prod":
-    if config.get('LOG_INSIGHT_KEY') is not None and config.get('LOG_INSIGHT_REGION') is not None:
-        r7LogHandler = R7InsightHandler(config.get('LOG_INSIGHT_KEY'),config.get('LOG_INSIGHT_REGION'))
+    if (
+        config.get("LOG_INSIGHT_KEY") is not None
+        and config.get("LOG_INSIGHT_REGION") is not None
+    ):
+        r7LogHandler = R7InsightHandler(
+            config.get("LOG_INSIGHT_KEY"), config.get("LOG_INSIGHT_REGION")
+        )
         logger.add(r7LogHandler)
 
 
@@ -61,12 +74,11 @@ def logException(message, *args):
     try:
         sendWebhook = True
         if len(args) > 0:
-            sendWebhook, = args
+            (sendWebhook,) = args
 
         logger.exception(f'{config.get("server")}=>{message}')
 
         if sendWebhook is True:
-            helperClient.sendWebhook(
-                f"{message}")
+            helperClient.sendWebhook(f"{message}")
     except Exception as ex:
         logger.exception(ex)

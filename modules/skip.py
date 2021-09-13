@@ -1,44 +1,33 @@
 from pyrogram import Client, filters
+from decorators.validate_command_pre_check import validate_command_pre_check
+from decorators.save_user_chat_db import save_user_chat_in_db
+from decorators.is_bot_admin import is_bot_admin
+from decorators.extras import send_message, edit_message
+from utils import logException, logInfo, logWarning
+from extras import music_player
 
 
-import callmanager
-from helpers.decorators import chat_allowed, delayDelete, admin_mode_check
-from utils.Logger import *
-from helpers.fromatMessages import getMessage
-
-
-@Client.on_message(filters.command(['skip', 'skip@vcplayerbot']) & ~filters.edited & ~filters.bot)
-@chat_allowed
-@admin_mode_check
+@Client.on_message(
+    filters.command(["skip", "skip@vcplayerbot"])
+    & ~filters.edited
+    & ~filters.bot
+    & ~filters.private
+)
+@save_user_chat_in_db
+@is_bot_admin
+@validate_command_pre_check
 async def skip(client, message, current_client):
     try:
-        chat_id = message.chat.id
-        logInfo(f"Skip command in chat : {chat_id}")
-
-        music_player_instance = callmanager.MusicPlayer()
-        pytgcalls_instance, err_message = music_player_instance.createGroupCallInstance(
-            chat_id, current_client, client)
-        if pytgcalls_instance is None:
-            m = await client.send_message(message.chat.id, f"{err_message}")
-            if current_client.get('remove_messages') is not None and current_client.get('remove_messages') > 0:
-                await delayDelete(m, current_client.get('remove_messages'))
+        current_chat = message.chat
+        logInfo(f"Skip command in chat : {current_chat.id}")
+        (
+            gc_instance,
+            err_message,
+        ) = await music_player.getGroupCallInstance(current_chat.id)
+        if gc_instance is None:
+            await send_message(client, current_chat.id, f"{err_message}")
             return
-
-        if pytgcalls_instance.active is not True:
-            msg, kbd = getMessage(message, 'start-voice-chat')
-            m = await client.send_message(message.chat.id, f"{msg}", disable_web_page_preview=True, reply_markup=kbd)
-            if current_client.get('remove_messages') is not None and current_client.get('remove_messages') > 0:
-                await delayDelete(m, current_client.get('remove_messages'))
-            return
-
-        status, resp_message = await pytgcalls_instance.skipPlayBack(fromCommand=True)
-        if status is True:
-            pytgcalls_instance.status = "playing"
-            pytgcalls_instance.active = True
-        m = await client.send_message(message.chat.id, f"{resp_message}")
-        if current_client.get('remove_messages') is not None and current_client.get('remove_messages') > 0:
-            await delayDelete(m, current_client.get('remove_messages'))
-        return
-
+        await gc_instance.skip_playback(user_requested=True)
     except Exception as ex:
-        logException(f"Error in skip: {ex}", True)
+        await send_message(client, message.chat.id, f"__Error while skipping : {ex}__")
+        logException(f"Error in skipping: {ex}", True)

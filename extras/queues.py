@@ -42,6 +42,7 @@ def clear(chat_id: int):
             queues[chat_id].queue = []
     raise Empty
 
+
 def size(chat_id: int) -> int:
     if chat_id not in queues:
         return 0
