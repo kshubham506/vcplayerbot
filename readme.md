@@ -11,13 +11,13 @@ Official Bot : [VCPlayerBot](https://telegram.me/vcplayerbot)   |   Discussion G
 
 
 # Requirements
-1. Telegram Api Id and Hash [ Get it from my.telegram.org ]
-2. A Telegram Bot Token. Get it from [@botfather]("https://t.ne/botfather").
+1. Telegram Api Id and Hash [ Get it from http://my.telegram.org ]
+2. A Telegram Bot Token. Get it from [@botfather](https://t.me/botfather) 
 3. Python 3.6+
 4. [ Optional, only use if you are an advanced user ] Mongo DB [ Create free account from mongo website and get your connection string. ] 
 
 # Deploying To Heroku
-1. Get your telegram API ID and API HASH from my.telegram.org and the BOT TOKEN from [@botfather]("https://t.ne/botfather").
+1. Get your telegram API ID and API HASH from my.telegram.org and the BOT TOKEN from [@botfather](https://t.me/botfather)
 2. Generate your telegram session string using the `Run on Repl` button below (Click on run after opening the url below) or use the `generateSession.py` file or read the steps [mentioned here](get_session_string.md).
 
 - [![Run on Repl.it](https://repl.it/badge/github/kshubham506/vcplayerbot)](https://replit.com/@kshubham506/GenerateSession?lite=1&outputonly=1)
@@ -59,6 +59,7 @@ Available env variables
 
 # Features
 Streams directly from url, Playlist support
+
 Command | Description
 ------------ | -------------
 /start , /help | Lists the available commands.
