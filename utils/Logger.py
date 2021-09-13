@@ -44,6 +44,7 @@ class InterceptHandler(logging.Handler):
 logging.getLogger("filelock").setLevel(logging.ERROR)
 logging.basicConfig(handlers=[InterceptHandler()], level="INFO")
 
+# optional advanced feature, for sending logs to r7
 if config.get("env") == "prod":
     if (
         config.get("LOG_INSIGHT_KEY") is not None

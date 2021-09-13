@@ -1,5 +1,5 @@
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from utils import logInfo, logException, config
+from utils import logInfo, logException, config, mongoDBClient
 
 
 def getMessage(message, action, errorMsg=""):
@@ -9,7 +9,6 @@ def getMessage(message, action, errorMsg=""):
             "-audio": "Stream just the audio.",
             "-repeat": "Play the song/video in repeat mode.",
             "-res720": "Stream the audio/video in the provided quality/resolution.",
-            "-silent": "Silently play the requested file/url.",
             "-lipsync": "Use this if audio is not in sync with video",
         }
         if action == "start-private-message":
@@ -37,10 +36,16 @@ def getMessage(message, action, errorMsg=""):
                 send_message
                 + f"\n__It is designed to play, as simple as possible, music/video in your groups through the **new voice chats** introduced by Telegram.__"
             )
-            send_message = (
-                send_message
-                + f"\n\n**Few things before we get started**\n`• make sure the bot is an admin in this group`\n`• make sure group admin has authorized the bot`"
-            )
+            if not mongoDBClient.client:
+                send_message = (
+                    send_message
+                    + f"\n\n**Few things before we get started**\n`• make sure the bot is an admin in this group`\n`• make sure you provided USERBOT_SESSION value in env`"
+                )
+            else:
+                send_message = (
+                    send_message
+                    + f"\n\n**Few things before we get started**\n`• make sure the bot is an admin in this group`\n`• make sure group admin has authorized the bot`"
+                )
             send_message = send_message + f"\n\nSend /help for available options."
             return send_message, getReplyKeyBoard(message, action)
         elif action == "no-auth-docs":
@@ -62,21 +67,30 @@ def getMessage(message, action, errorMsg=""):
                 send_message
                 + f"\n• **/start : ** __Shows welcome message and add to group button.__"
             )
-            send_message = (
-                send_message
-                + f"\n• **/auth : ** __Authorizes the bot, mandatory for playing songs/video.__"
-            )
+            if mongoDBClient.client:
+                send_message = (
+                    send_message
+                    + f"\n• **/auth : ** __Authorizes the bot, mandatory for playing songs/video.__"
+                )
             send_message = (
                 send_message + f"\n• **/help : ** __Shows the available commands.__"
             )
-            send_message = (
-                send_message
-                + f"\n\n__• You first add the bot to a group/channel.__\n"
-                + f"__• Provide admin rights to the bot in the group/channel.__\n"
-                + f"__• Send /start in that group/channel and click on **Authorize Button**.__\n"
-                + f"__• Bot will send you the message with next steps, follow them and that's all.__\n"
-                + f"__• Send `help` in the group/channel to view the playback commands.__"
-            )
+            if mongoDBClient.client:
+                send_message = (
+                    send_message
+                    + f"\n\n__• You first add the bot to a group/channel.__\n"
+                    + f"__• Provide admin rights to the bot in the group/channel.__\n"
+                    + f"__• Send /start in that group/channel and click on **Authorize Button**.__\n"
+                    + f"__• Bot will send you the message with next steps, follow them and that's all.__\n"
+                    + f"__• Send `help` in the group/channel to view the playback commands.__"
+                )
+            else:
+                send_message = (
+                    send_message
+                    + f"\n\n__• You first add the bot to a group/channel.__\n"
+                    + f"__• Provide admin rights to the bot in the group/channel.__\n"
+                    + f"__• Send `help` in the group/channel to view the playback commands.__"
+                )
             send_message = (
                 send_message + f"\n\n**__For any issues contact @voicechatsupport__**"
             )
@@ -96,6 +110,12 @@ def getMessage(message, action, errorMsg=""):
             send_message = (
                 send_message
                 + f"\n• **/play media name|url  : ** __Plays the given media.__"
+            )
+            for k, v in extra_options.items():
+                send_message = send_message + f"\n\t\t\t\t **{k}** : __{v}__"
+            send_message = (
+                send_message
+                + f"\n`/play coldplay -video -res480` → __Plays coldplay video in 480p.__"
             )
             send_message = send_message + f"\n• **/stop : ** __Stop the playback.__"
             send_message = send_message + f"\n• **/pause : ** __Pause the playback.__"
@@ -140,7 +160,7 @@ def getMessage(message, action, errorMsg=""):
             return send_message, getReplyKeyBoard(message, action)
 
     except Exception as ex:
-        logException(f"**__Error : {ex}__**", True)
+        logException(f"**__Error in getMessages: {ex}__**", True)
 
 
 def getReplyKeyBoard(message, action):
@@ -166,24 +186,27 @@ def getReplyKeyBoard(message, action):
             )
             return keyboard
         elif action == "start-group-message":
-            keyboard = InlineKeyboardMarkup(
+            rows = [
                 [
+                    InlineKeyboardButton(
+                        "👥 Support Group", url=f"{config.get('SUPPORT_GROUP')}"
+                    ),
+                    InlineKeyboardButton(
+                        "📔 Source Code", url=f"{config.get('GITHUB_REPO')}"
+                    ),
+                ]
+            ]
+            if mongoDBClient.client:
+                rows.insert(
+                    0,
                     [
                         InlineKeyboardButton(
                             "🤖 Authorize the bot 🤖",
                             callback_data=f"authorize-user-bot",
                         ),
                     ],
-                    [
-                        InlineKeyboardButton(
-                            "👥 Support Group", url=f"{config.get('SUPPORT_GROUP')}"
-                        ),
-                        InlineKeyboardButton(
-                            "📔 Source Code", url=f"{config.get('GITHUB_REPO')}"
-                        ),
-                    ],
-                ]
-            )
+                )
+            keyboard = InlineKeyboardMarkup(rows)
             return keyboard
         elif action == "chat-not-allowed":
             keyboard = InlineKeyboardMarkup(
@@ -203,4 +226,4 @@ def getReplyKeyBoard(message, action):
             return keyboard
         return None
     except Exception as ex:
-        logException(f"**__Error : {ex}__**", True)
+        logException(f"**__Error in getReplyKeyBoard: {ex}__**", True)

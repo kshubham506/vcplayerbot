@@ -67,9 +67,22 @@ def save_user_chat_in_db(func: Callable) -> Callable:
                         "max_duration": int(config.get("ALLOWED_SONG_DURATION_IN_SEC")),
                         "max_queue_size": int(config.get("PLAYLIST_SIZE")),
                         "allow_repeat": False,
-                        "admin_mode": False,
                     },
                 }
+                # if user is running in no_mongo mode set userbot info and allow all restricted features
+                if not mongoDBClient.client:
+                    current_client["extras"]["allow_video"] = True
+                    current_client["extras"]["allow_others"] = True
+                    current_client["extras"]["max_video_res"] = 1920
+                    current_client["extras"]["max_video_res"] = 1000
+                    current_client["extras"]["allow_repeat"] = True
+                    current_client["userBot"] = [
+                        {
+                            "apiId": config.get("API_ID"),
+                            "apiHash": config.get("API_HASH"),
+                            "sessionId": config.get("USERBOT_SESSION"),
+                        }
+                    ]
                 current_client = mongoDBClient.add_tgcalls_chats(
                     current_chat.id, json_util.dumps(current_client)
                 )

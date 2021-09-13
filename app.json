@@ -1,6 +1,6 @@
 {
     "name": "Telegram VCPlayer Bot",
-    "description": "Telegram Voice-Chat Music Player Bot. Dveloped and maintained by SkTechHub.",
+    "description": "Telegram Voice-Chat Music Player Bot. Developed and maintained by SkTechHub.",
     "repository": "https://github.com/kshubham506/vcplayerbot",
     "logo": "https://i.postimg.cc/QdH3XrxV/Screenshot-2021-05-05-203005-removebg-preview.png",
     "keywords": [
@@ -34,16 +34,8 @@
             "required": true
         },
         "USERBOT_SESSION": {
-            "description": "USER BOT Session string. generate this using the generateSession.py script present in github repo.",
+            "description": "USER BOT Session string. Generate this using the generateSession.py script present in github repo.",
             "required": true
-        },
-        "MONGO_URL": {
-            "description": "MONGO Database URI. Leave it blank as it's not compulsory.",
-            "required": false
-        },
-        "MODE": {
-            "description": "Default is multiple, which means bot will be allowed only in one group. Allowed [single, multiple]",
-            "required": false
         }
     },
     "formation": {

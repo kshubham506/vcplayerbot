@@ -1,5 +1,5 @@
 # Telegram VCPlayer Bot
-Play any song/video directly into your group voice chat.
+Play any media(song, video, live, remote) directly into your group voice chat.
 
 Official Bot : [VCPlayerBot](https://telegram.me/vcplayerbot)   |   Discussion Group : [VoiceChat Music Player Support](https://telegram.me/voicechatsupport)
 
@@ -7,67 +7,67 @@ Official Bot : [VCPlayerBot](https://telegram.me/vcplayerbot)   |   Discussion G
   <img width="200" height="200" src="https://i.postimg.cc/QdH3XrxV/Screenshot-2021-05-05-203005-removebg-preview.png">
 </p>
 
-[Checkout AutoForwarder Bot](https://sktechhub.com/auto-forward)
+[Checkout AutoForwarder Bot](https://sktechhub.com/auto-forward) | [Try Code Compile Bot](https://t.me/codecompilebot)
 
 
 # Requirements
 1. Telegram Api Id and Hash [ Get it from my.telegram.org ]
-2. A Telegram Bot Token. Get it from @botfather.
+2. A Telegram Bot Token. Get it from [@botfather]("https://t.ne/botfather").
 3. Python 3.6+
-4. [ Optional ] Mongo DB [ Create free account from mongo website and get your connection string. ] 
+4. [ Optional, only use if you are an advanced user ] Mongo DB [ Create free account from mongo website and get your connection string. ] 
 
 # Deploying To Heroku
-1. Get your telegram API ID and API HASH from my.telegram.org and the BOT TOKEN from @botfather.
-2. Generate your telegram session string using the `Run on Repl` button below (Click on run after opening the url below) or use the `generateSession.py` file.
+1. Get your telegram API ID and API HASH from my.telegram.org and the BOT TOKEN from [@botfather]("https://t.ne/botfather").
+2. Generate your telegram session string using the `Run on Repl` button below (Click on run after opening the url below) or use the `generateSession.py` file or read the steps [mentioned here](get_session_string.md).
 
 - [![Run on Repl.it](https://repl.it/badge/github/kshubham506/vcplayerbot)](https://replit.com/@kshubham506/GenerateSession?lite=1&outputonly=1)
 
 
-3. Clcik on the `Deploy to Heroku` button below. Fill in the required fields on the website that opens.
+3. Click on the `Deploy to Heroku` button below. Fill in the required fields on the website that opens.
 
 - [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 4. Add the bot to your group and send the [commands](https://github.com/kshubham506/vcplayerbot#features) to start using the VCPlayer Bot :)
 
 
-# Steps To Setup
-1. Install pyrogram for generatong session string : `pip3 install -U pyrogram`
-2. Generate your telegram session string. Run `python3 generateSession.py`
-3. Rename `.env copy` to `.env` and fill all the required/mandatory fields in there.
-4. [ Optional ] In Mongo DB a database named `sktechhub` will be created with the collections `tgcalls_chats` , `tgcalls_playbacks` , `tgcalls_users` ( if not present then create them manually). 
+# Steps To Setup on VPC or Locally
+1. Read the steps [mentioned here](get_session_string.md) to get your session string.
+2. Rename `.env copy` to `.env` and fill all the values there. You can leave the `MONGO_URL` line as it is (only fill if you know what you are doing)
+
 
 # Steps to Run
 1. After the setup is done.
 2. Install the requirements : `pip3 install -U -r requirements.txt`
 3. Run the service by : 
-  - Run `python3 main.py --help` for available settings.  
-  - Or Run `python3 main.py -env prod` to use default settings
+  - Run `python3 main.py -env prod` 
+  
+  - (make sure `-env prod` flag is provided, if not rename `.env` file to `.env.copy`)
 
 # Environmental Variables
 
 Starting from command line:
-- python3 main.py -env `prod|local` -mode `single|multiple` 
+- python3 main.py -env `prod|local`
 
-Available env varibales
+Available env variables
 - `Mandataory` **API_ID** :  get it from my.telegram.org
 - `Mandataory` **API_HASH** : get it from my.telegram.org
 - `Mandataory` **BOT_TOKEN** : bot token of your music bot, get it from @botfather
-- `Mandataory` **USERBOT_SESSION** : user bot pyrogram session string, generate it using the `generateSession.py` file present in the root directory of repo.
+- `Mandataory` **USERBOT_SESSION** : user bot pyrogram session string, read the steps [mentioned here](get_session_string.md) to get your session string.
 - `Optional` **MONGO_URL** : connection url for mongo databse. needed if you wnat to run the service in single mode
-- `Optional` **MODE** : _single|multiple_ single mode means bot will be allowed only in one group, multiple means allowed in multiple groups. It is `multiple` by default. If you want to run in single mode then `MONGO_URL` is must.
+
+- Many other optional variables, check [Config.py file](utils/config.py) for details.
 
 # Features
+Streams directly from url, Playlist support
 Command | Description
 ------------ | -------------
 /start , /help | Lists the available commands.
-/play song_name/song_url -res[num] | Starts the song in the voice chat, num specifies the audio resolution.
-/play song_name/song_url -video -res[num] | Starts the video in the voice chat, num specifies the video resolution.
+/play song_name/song_url -res[num] | Starts the song in the voice chat, num specifies the audio resolution. eg. `/play coldplay -res256` → plays coldplay song in 256 bit rate
+/play song_name/song_url -video -res[num] | Starts the video in the voice chat, num specifies the video resolution. eg. `/play coldplay -res2480` → plays coldplay video in 480p
+/skip | Skip the current media playback.
 /stop | Stops the playback.
-/refreshadmins | Refreshes the admin list in the chat.
-/auth | Adds the user mentioned in the reply to bot admin list.
-/unauth | Removes the user mentioned in the reply from bot admin list.
-/listadmins | Lists all the bot admins.
-/adminmode [on,off] | Turn on/off the admin mode.
+
+
 
 <p align="center">
   <img width="500" height="300" src="https://i.postimg.cc/qRtC4bD2/photo-2021-05-28-00-15-11.jpg">

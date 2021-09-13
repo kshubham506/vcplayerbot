@@ -55,7 +55,7 @@ async def VideoSearch(songName, songUrl, video=False, res=480):
                     "id": song.video_id,
                     "thumbnails": thumbnails,
                     "title": song.title,
-                    "long_desc": description,
+                    "long_desc": "",
                     "channel": channelName,
                     "duration": int(song.length) if song.length else None,
                     "views": song.views,

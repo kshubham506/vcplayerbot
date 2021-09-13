@@ -29,7 +29,7 @@ async def play(client: Client, message, current_client):
     try:
         current_chat = message.chat
         # check if song url or name is provided or not
-        parsed_command = current_client["parsed_command"]
+        parsed_command = current_client.get("parsed_command")
         logInfo(
             f"Playing command in chat : {current_chat.id} , requested_by: {current_client['requested_by']} , command: {parsed_command}"
         )
@@ -103,5 +103,5 @@ async def play(client: Client, message, current_client):
             )
 
     except Exception as ex:
-        await send_message(client, message.chat.id, f"__Error while playing : {ex}__")
+        await send_message(client, message.chat.id, f"__Error in play command : {ex}__")
         logException(f"Error in play command : {ex}")

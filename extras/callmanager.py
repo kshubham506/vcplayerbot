@@ -178,7 +178,7 @@ class GroupCallInstance(object):
                 self.logInfo(f"Started playback")
                 await self.thumbnail_processing(songInfo, fetching_media_msg)
                 mongoDBClient.add_song_playbacks(
-                    songInfo, songInfo["requested_by"], self.client_doc["_id"]
+                    songInfo, songInfo["requested_by"], self.client_doc.get("_id")
                 )
                 await self.pytgcalls.join(self.chat_id)
                 if songInfo["is_video"] is False or songInfo["only_audio"] is True:
@@ -257,7 +257,7 @@ class GroupCallInstance(object):
             queues.task_done(self.chat_id)
             if queues.is_empty(self.chat_id) is True:
                 if user_requested is False:
-                    await self.stop_playback()
+                    return await self.stop_playback()
                 resp_msg = f"🛑 __There is no media waiting in queue, If you want to stop send /stop.__"
             else:
                 new_media = queues.get(self.chat_id)

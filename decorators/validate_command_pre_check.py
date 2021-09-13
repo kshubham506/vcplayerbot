@@ -7,7 +7,7 @@ from typing import Callable
 from pyrogram import Client
 from pyrogram.types import Message, CallbackQuery, Chat
 
-from utils import logException, logInfo, config, mongoDBClient
+from utils import logException, logInfo, config
 
 
 def validate_command_pre_check(func: Callable) -> Callable:

@@ -2,7 +2,7 @@
 
 ## Method 1
 
-- Make sure you have your telegram api id and hash in hand. I fnot get it from [my.telegram.org](https://my.telegram.org)
+- Make sure you have your telegram api id and hash in hand. If not get it from [my.telegram.org](https://my.telegram.org)
 - Click on `Run on Repl` button below.
 
 - [![Run on Repl.it](https://repl.it/badge/github/kshubham506/vcplayerbot)](https://replit.com/@kshubham506/GenerateSession?lite=1&outputonly=1)

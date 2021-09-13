@@ -3,8 +3,6 @@ from extras.remove_old_files import removeOldFiles
 from extras.shutdown import shutdown
 from pyrogram import Client
 from utils import config, logInfo, logWarning, logException
-
-# from callmanager import MusicPlayer  # , user_app
 import signal
 import sys
 import asyncio
@@ -24,8 +22,18 @@ def main():
     loop = None
     bot = None
     try:
+        if (
+            not config.get("API_ID")
+            or not config.get("API_HASH")
+            or not config.get("BOT_TOKEN")
+            or (not config.get("USERBOT_SESSION") and not config.get("MONGO_URL"))
+        ):
+            logWarning(
+                f"Please provide the required values in .env file, Please check {config.get('SESSION_STRING_STEPS')} on how to get the values"
+            )
+            sys.exit(0)
         # create the images and song folder if not there
-        folders = ["songs", "images", "Logs"]
+        folders = ["images", "Logs"]
         for f in folders:
             if not os.path.exists(f):
                 os.makedirs(f)
@@ -57,7 +65,7 @@ def main():
                     s, lambda s=s: asyncio.create_task(shutdown(s, loop))
                 )
         except NotImplementedError:
-            logWarning("Not implemented error : ")
+            logWarning("Not implemented on windows device. Can safely ignore.")
 
         bot.start()
 
@@ -65,16 +73,17 @@ def main():
         config.setBotId(bot_details.id)
         config.setBotUsername(bot_details.username)
 
-        loop.create_task(handle_db_calls())
+        if config.get("MONGO_URL"):
+            loop.create_task(handle_db_calls())
 
         loop.run_forever()
     except KeyboardInterrupt as k:
-        logWarning("Client Keyboard Interrupt, Exiting Code")
+        logWarning("Client Keyboard Interrupt, Exiting Service.")
     except Exception as ex:
         logException(f"Error in main method : {ex}", True)
     finally:
         logException(f"Closed the service :)", True)
-        if bot is not None:
+        if bot is not None and bot.is_connected:
             bot.stop()
 
 

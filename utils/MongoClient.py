@@ -12,12 +12,17 @@ import uuid
 class MongoDBClient(metaclass=Singleton):
     def __init__(self) -> None:
         self.config = Config()
-        self.client = pymongo.MongoClient(self.config.get("MONGO_URL"))
-        self.tgcalls = self.client["tgcalls"]
-        self.sktechhub = self.client["sktechhub"]
+        if self.config.get("MONGO_URL") is None:
+            self.client = None
+        else:
+            self.client = pymongo.MongoClient(self.config.get("MONGO_URL"))
+            self.tgcalls = self.client["tgcalls"]
+            self.sktechhub = self.client["sktechhub"]
 
     def fetchRunTimeData(self):
         try:
+            if not self.client:
+                return
             return self.sktechhub.runtime_data.find_one(
                 {"service": self.config.get("source")}
             )
@@ -27,6 +32,8 @@ class MongoDBClient(metaclass=Singleton):
 
     def get_all_chats(self):
         try:
+            if not self.client:
+                return
             data = self.tgcalls.tgcalls_chats.find({})
             return list(data if data is not None else [])
         except Exception as ex:
@@ -36,6 +43,8 @@ class MongoDBClient(metaclass=Singleton):
     @logger.catch
     def add_tgcalls_users(self, chat_id, userInfo):
         userInfo = json_util.loads(userInfo)
+        if not self.client:
+            return userInfo
         user = self.tgcalls.tgcalls_users.find_one_and_update(
             {"chat_id": chat_id},
             {"$set": {"updated_at": datetime.now()}},
@@ -52,6 +61,8 @@ class MongoDBClient(metaclass=Singleton):
     @logger.catch
     def add_tgcalls_chats(self, chat_id, chatInfo):
         chatInfo = json_util.loads(chatInfo)
+        if not self.client:
+            return chatInfo
         chat = self.tgcalls.tgcalls_chats.find_one_and_update(
             {"chat_id": chat_id},
             {"$set": {"updated_at": datetime.now()}},
@@ -66,6 +77,8 @@ class MongoDBClient(metaclass=Singleton):
 
     @logger.catch
     def generate_auth_document(self, chat_id, user_id):
+        if not self.client:
+            return
         doc = {
             "user_id": user_id,
             "chat_id": chat_id,
@@ -78,6 +91,8 @@ class MongoDBClient(metaclass=Singleton):
 
     @logger.catch
     def get_temp_auths(self, user_id):
+        if not self.client:
+            return
         return list(
             self.tgcalls.tgcalls_temp_auth.find(
                 {
@@ -90,6 +105,8 @@ class MongoDBClient(metaclass=Singleton):
 
     @logger.catch
     def complete_temp_auth_doc(self, uuid):
+        if not self.client:
+            return
         self.tgcalls.tgcalls_temp_auth.find_one_and_update(
             {"uuid": uuid}, {"$set": {"is_done": True}}
         )
@@ -98,6 +115,8 @@ class MongoDBClient(metaclass=Singleton):
     def save_user_bot_details(
         self, chat_id, user_id, user_name, api_id, api_hash, session_string
     ):
+        if not self.client:
+            return
         user_bot = {
             "apiId": api_id,
             "apiHash": api_hash,
@@ -113,6 +132,8 @@ class MongoDBClient(metaclass=Singleton):
 
     @logger.catch
     def add_song_playbacks(self, songInfo, requestedUser, docId):
+        if not self.client:
+            return
         songInfo = {
             "title": songInfo["title"],
             "link": songInfo["link"],
@@ -130,6 +151,8 @@ class MongoDBClient(metaclass=Singleton):
         )
 
     def update_admins(self, chatId, admins):
+        if not self.client:
+            return
         try:
             if isinstance(admins, list) is True:
                 data = self.tgcalls.tgcalls_chats.find_one_and_update(
@@ -150,6 +173,8 @@ class MongoDBClient(metaclass=Singleton):
             logException(f"Error in update_admins : {ex}")
 
     def remove_admins(self, chatId, adminToRemove):
+        if not self.client:
+            return
         try:
             if isinstance(adminToRemove, dict) is True:
                 data = self.tgcalls.tgcalls_chats.find_one_and_update(
@@ -166,6 +191,8 @@ class MongoDBClient(metaclass=Singleton):
             logException(f"Error in remove_admins : {ex}")
 
     def update_admin_mode(self, chatId, newStatus):
+        if not self.client:
+            return
         try:
             if isinstance(newStatus, bool) is True:
                 data = self.tgcalls.tgcalls_chats.find_one_and_update(
@@ -182,6 +209,8 @@ class MongoDBClient(metaclass=Singleton):
             logException(f"Error in update_admin_mode : {ex}")
 
     def chats_to_disconnect(self):
+        if not self.client:
+            return
         try:
             from datetime import timedelta
 

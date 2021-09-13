@@ -1,12 +1,5 @@
-webhookUrl=<optional>
-WEBHOOK_AUTH=<optional>
-HELPER_ACT=<username of userbot>
-HELPER_ACT_ID=<user if of userbot>
-BOT_ID=<user id of bot>
-LOG_INSIGHT_KEY=<optional>
-LOG_INSIGHT_REGION=<optional>
-BOT_TOKEN=<mandatory>
-API_ID=<mandatory>
-MONGO_URL=<mandatory>
-API_HASH=<mandatory>
-USERBOT_SESSION=<mandatory>
+BOT_TOKEN=
+API_ID=
+API_HASH=
+MONGO_URL=
+USERBOT_SESSION=

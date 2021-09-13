@@ -4,7 +4,7 @@ import time
 
 
 @logger.catch
-def removeOldFiles(path=["images/", "songs/"]):
+def removeOldFiles(path=["images/"]):
     logInfo("Removing old files")
     removed = []
     olderThan = 2 * 60 * 60  # in seconds

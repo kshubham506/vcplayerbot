@@ -4,8 +4,6 @@ from utils.Logger import *
 from urllib.request import urlopen
 
 
-# ITC_BOLD = ImageFont.truetype(
-#     "etc/ITC Avant Garde Gothic LT Bold.otf", 32)
 KRONA = ImageFont.truetype("etc/KronaOne-Regular.ttf", 48)
 KRONA_52 = ImageFont.truetype("etc/KronaOne-Regular.ttf", 52)
 ITC_REG = ImageFont.truetype("etc/ITC Avant Garde Gothic LT Book Regular.otf", 48)
