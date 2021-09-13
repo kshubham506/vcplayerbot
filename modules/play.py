@@ -33,7 +33,7 @@ async def play(client: Client, message, current_client):
         logInfo(
             f"Playing command in chat : {current_chat.id} , requested_by: {current_client['requested_by']} , command: {parsed_command}"
         )
-        if helperClient.isEmpty(parsed_command["song_name"]):
+        if not parsed_command or helperClient.isEmpty(parsed_command["song_name"]):
             await send_message(
                 client,
                 current_chat.id,
