@@ -1,3 +1,4 @@
+import re
 from decorators.extras import (
     get_chat_member_count,
     get_chat_member_list,
@@ -17,8 +18,8 @@ def validate_command_pre_check(func: Callable) -> Callable:
                 message: Message = incomingPayload.message
             else:
                 message: Message = incomingPayload
-
-            isPlayCommand = message.command and message.command[0].lower() == "play"
+            isPlayCommand = message.command and re.match(
+                "play", message.command[0], flags=re.I) is not None
             current_chat: Chat = message.chat
             reason = None
 

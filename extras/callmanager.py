@@ -277,19 +277,19 @@ class GroupCallInstance(object):
             self.logInfo(f"Stopping the playback : user_requested : {user_requested} ")
             try:
                 queues.clear(self.chat_id)
-            except QueueEmpty:
-                pass
+            except QueueEmpty as qe:
+                self.logWarn(f"Can be ignored : QueueEmpty::stop :{qe}")
 
             try:
                 await self.pytgcalls.stop()
             except Exception as ex:
-                logWarning(f"Can be ignored : pytgcalls.stop :{ex} , {self.chat_id}")
+                self.logWarn(f"Can be ignored : pytgcalls.stop :{ex}")
 
             try:
                 await self.pytgcalls.leave_current_group_call()
             except Exception as ex:
-                logWarning(
-                    f"Can be ignored : leave_current_group_call :{ex} , {self.chat_id}"
+                self.logWarn(
+                    f"Can be ignored : leave_current_group_call :{ex}"
                 )
 
             if send_reason_msg is True:
