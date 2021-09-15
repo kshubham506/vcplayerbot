@@ -75,7 +75,7 @@ class Config(metaclass=Singleton):
             "ALLOWED_SONG_DURATION_IN_SEC" not in self.config
             or not self.config["ALLOWED_SONG_DURATION_IN_SEC"]
         ):
-            self.config["ALLOWED_SONG_DURATION_IN_SEC"] = 15 * 60
+            self.config["ALLOWED_SONG_DURATION_IN_SEC"] = 13 * 60
 
         # readme file/url listing steps to generate session string
         if (
@@ -89,6 +89,34 @@ class Config(metaclass=Singleton):
         # minimum number of members required to access the bot
         if "MIN_MEMBERS_REQUIRED" not in self.config:
             self.config["MIN_MEMBERS_REQUIRED"] = 0
+
+        # default value for new chat: ALLOW_VIDEO
+        if "ALLOW_VIDEO" not in self.config:
+            self.config["ALLOW_VIDEO"] = True
+
+        # default value for new chat: ALLOW_AUDIO
+        if "ALLOW_AUDIO" not in self.config:
+            self.config["ALLOW_AUDIO"] = True
+
+        # default value for new chat: ALLOW_OTHERS
+        if "ALLOW_YOUTUBE" not in self.config:
+            self.config["ALLOW_YOUTUBE"] = True
+
+        # default value for new chat: ALLOW_OTHERS
+        if "ALLOW_OTHERS" not in self.config:
+            self.config["ALLOW_OTHERS"] = True
+
+        # default value for new chat: MAX_VIDEO_RES
+        if "MAX_VIDEO_RES" not in self.config:
+            self.config["MAX_VIDEO_RES"] = 1920
+
+        # default value for new chat: MAX_AUDIO_RES
+        if "MAX_AUDIO_RES" not in self.config:
+            self.config["MAX_AUDIO_RES"] = 1920
+
+        # default value for new chat: ALLOW_REPEAT
+        if "ALLOW_REPEAT" not in self.config:
+            self.config["ALLOW_REPEAT"] = True
 
         # should other group be able to add the bot and use it
         # 0 - False , 1 - True

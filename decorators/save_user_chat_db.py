@@ -58,24 +58,19 @@ def save_user_chat_in_db(func: Callable) -> Callable:
                     "userBot": [],
                     "extras": {
                         "min_members": int(config.get("MIN_MEMBERS_REQUIRED")),
-                        "allow_video": False,
-                        "allow_audio": True,
-                        "allow_youtube": True,
-                        "allow_others": False,
-                        "max_video_res": 360,
-                        "max_audio_res": 150,
+                        "allow_video": bool(config.get("ALLOW_VIDEO")),
+                        "allow_audio": bool(config.get("ALLOW_AUDIO")),
+                        "allow_youtube": bool(config.get("ALLOW_YOUTUBE")),
+                        "allow_others": bool(config.get("ALLOW_OTHERS")),
+                        "max_video_res": int(config.get("MAX_VIDEO_RES")),
+                        "max_audio_res": int(config.get("MAX_AUDIO_RES")),
                         "max_duration": int(config.get("ALLOWED_SONG_DURATION_IN_SEC")),
                         "max_queue_size": int(config.get("PLAYLIST_SIZE")),
-                        "allow_repeat": False,
+                        "allow_repeat": bool(config.get("ALLOW_REPEAT")),
                     },
                 }
                 # if user is running in no_mongo mode set userbot info and allow all restricted features
                 if not mongoDBClient.client:
-                    current_client["extras"]["allow_video"] = True
-                    current_client["extras"]["allow_others"] = True
-                    current_client["extras"]["max_video_res"] = 1920
-                    current_client["extras"]["max_video_res"] = 1000
-                    current_client["extras"]["allow_repeat"] = True
                     current_client["userBot"] = [
                         {
                             "apiId": config.get("API_ID"),

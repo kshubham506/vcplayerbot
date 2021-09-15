@@ -1,3 +1,4 @@
+from utils import VideoFetchFromId
 from pyrogram import Client
 from pyrogram.types import User
 import uuid
@@ -161,7 +162,7 @@ class GroupCallInstance(object):
             raise Exception(ex)
 
     async def start_playback(self, songInfo, fetching_media_msg=None):
-        resp_msg = None
+        isError, resp_msg = None, None
         try:
             self.logInfo(f"Starting the playback, SongInfo  → {songInfo}")
             try:
@@ -175,11 +176,19 @@ class GroupCallInstance(object):
                 return
 
             try:
-                self.logInfo(f"Started playback")
+                # condition when to fetch youtube url again
+                if not fetching_media_msg and songInfo["is_youtube"] is True:
+                    resfreshedSong = await VideoFetchFromId(
+                        songInfo["id"], songInfo["is_video"], songInfo["resolution"]
+                    )
+                    songInfo["link"] = resfreshedSong["link"]
+                    songInfo["audio_link"] = resfreshedSong["audio_link"]
+
                 await self.thumbnail_processing(songInfo, fetching_media_msg)
                 mongoDBClient.add_song_playbacks(
                     songInfo, songInfo["requested_by"], self.client_doc.get("_id")
                 )
+
                 await self.pytgcalls.join(self.chat_id)
                 if songInfo["is_video"] is False or songInfo["only_audio"] is True:
                     await self.pytgcalls.start_audio(
@@ -192,6 +201,7 @@ class GroupCallInstance(object):
                         with_audio=True,
                         enable_experimental_lip_sync=songInfo["lip_sync"],
                     )
+                self.logInfo(f"Started playback")
                 self.active = True
             except GroupCallNotFoundError as ex:
                 msg, kbd = getMessage(None, "start-voice-chat")
@@ -215,9 +225,12 @@ class GroupCallInstance(object):
         except Exception as ex:
             self.logException(f"Error while starting the playback: {ex}", True)
             resp_msg = f"__Error while starting the playback : {ex}__"
+            isError = True
         finally:
             if resp_msg:
                 await send_message(self.bot_client, self.chat_id, f"{resp_msg}")
+            if isError:
+                await self.skip_playback()
 
     async def add_to_queue(self, songInfo, fetching_media_msg=None):
         resp_msg = None
@@ -279,6 +292,8 @@ class GroupCallInstance(object):
                 queues.clear(self.chat_id)
             except QueueEmpty as qe:
                 self.logWarn(f"Can be ignored : QueueEmpty::stop :{qe}")
+            except Exception as ex:
+                self.logWarn(f"Can be ignored : QueueClear Error :{ex}")
 
             try:
                 await self.pytgcalls.stop()
@@ -288,9 +303,7 @@ class GroupCallInstance(object):
             try:
                 await self.pytgcalls.leave_current_group_call()
             except Exception as ex:
-                self.logWarn(
-                    f"Can be ignored : leave_current_group_call :{ex}"
-                )
+                self.logWarn(f"Can be ignored : leave_current_group_call :{ex}")
 
             if send_reason_msg is True:
                 resp_msg = f"**Playback ended `[If you were in middle of a song and you are getting this message then this has happended due to a deployement. You can play again after some time.]`**\n\n__Thank you for trying and do give your feedback/suggestion @sktechhub_chat.__"
