@@ -39,7 +39,9 @@ def clear(chat_id: int):
         if queues[chat_id].empty():
             raise Empty
         else:
-            queues[chat_id].queue = []
+            for _ in range(queues[chat_id].qsize()):
+                queues[chat_id].get_nowait()
+                queues[chat_id].task_done()
     raise Empty
 
 

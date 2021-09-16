@@ -45,7 +45,7 @@ async def answer(client, callback_query, current_client):
                     logWarning(f"Unable to send auth message : {ex}")
 
                 return await callback_query.answer(
-                    f"Authorization intitiated for chat: {current_client['from_chat'].id}. Please open {config.get('BOT_USERNAME')} and send /auth command.",
+                    f"Authorization intitiated for chat: {current_client['from_chat'].id}.\nPlease open {config.get('BOT_USERNAME')} and send /auth command.",
                     show_alert=True,
                 )
 

@@ -52,9 +52,9 @@ def getMessage(message, action, errorMsg=""):
             send_message = f"__Oops! I was unable to find and initiated authorization. Note that they are valid only for 10 mins.__"
             send_message = (
                 send_message
-                + f"\n\nAdd the bot to your group, send /start and then tap on authorize button there."
+                + f"\n\nAdd the bot to your group, send /start in group and then tap on authorize button in that group."
             )
-            return send_message, getReplyKeyBoard(message, "start-group-message")
+            return send_message, getReplyKeyBoard(message, "no-auth-docs")
 
         elif action == "help-private-message":
             send_message = f"**VoiceChat Music Player**\n**Source Code :** [Repository]({config.get('GITHUB_REPO')})"
