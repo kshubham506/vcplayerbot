@@ -55,7 +55,7 @@ Available env variables
 - `Mandataory` **USERBOT_SESSION** : user bot pyrogram session string, read the steps [mentioned here](get_session_string.md) to get your session string.
 - `Optional` **MONGO_URL** : connection url for mongo databse. needed if you wnat to run the service in single mode
 
-- Many other optional variables, check [Config.py file](utils/config.py) for details.
+- Many other optional variables, check [Config.py](utils/Config.py) file for details.
 
 # Features
 Streams directly from url, Playlist support
