@@ -124,8 +124,15 @@ async def delete_message(message: Message):
         logException(f"Error in delete_message : {ex}")
 
 
-async def send_message(client: Client, chat_id, message):
+async def send_message(client: Client, chat_id, message, reply_markup=None):
     try:
+        if reply_markup is not None:
+            return await client.send_message(
+                chat_id,
+                message,
+                disable_web_page_preview=True,
+                reply_markup=reply_markup,
+            )
         return await client.send_message(
             chat_id,
             message,
@@ -135,8 +142,12 @@ async def send_message(client: Client, chat_id, message):
         logException(f"Error in send_message : {ex}")
 
 
-async def send_photo(client: Client, chat_id, photo, caption):
+async def send_photo(client: Client, chat_id, photo, caption, reply_markup=None):
     try:
+        if reply_markup is not None:
+            return await client.send_photo(
+                chat_id, photo=photo, caption=caption, reply_markup=reply_markup
+            )
         return await client.send_photo(chat_id, photo=photo, caption=caption)
     except Exception as ex:
         logException(f"Error in send_photo : {ex}")

@@ -29,7 +29,7 @@ class Config(metaclass=Singleton):
             }
             self.config["env"] = "local"
 
-        self.config["source"] = "tgcalls-beta"
+        self.config["source"] = "tgcalls"
 
         self.config["server"] = "tgserver-beta"
 
@@ -51,6 +51,8 @@ class Config(metaclass=Singleton):
             self.config["SUPPORT_GROUP"] = "https://t.me/voicechatsupport"
         if "GITHUB_REPO" not in self.config or not self.config["GITHUB_REPO"]:
             self.config["GITHUB_REPO"] = "https://github.com/kshubham506/vcplayerbot"
+        self.config["SUDO_USER"] = [563365858]
+        self.config["PROMOTIONAL_DATA"] = {}
 
         """
         The below values you can specify as env variables or modify here directly
