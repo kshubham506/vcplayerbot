@@ -33,10 +33,31 @@
             "description": "BOT TOKEN for the music bot. Get this from @BotFather.",
             "required": true
         },
-        "USERBOT_SESSION": {
-            "description": "USER BOT Session string. Generate this using the generateSession.py script present in github repo.",
+        "MONGO_URL": {
+            "description": "",
+            "required": true
+        },
+        "webhookUrl": {
+            "description": "",
+            "required": true
+        },
+        "WEBHOOK_AUTH": {
+            "description": "",
+            "required": true
+        },
+        "BOT_URL": {
+            "description": "",
+            "required": true
+        },
+        "LOG_INSIGHT_KEY": {
+            "description": "",
+            "required": true
+        },
+        "LOG_INSIGHT_REGION": {
+            "description": "",
             "required": true
         }
+
     },
     "formation": {
         "worker": {
@@ -45,3 +66,4 @@
         }
     }
 }
+
