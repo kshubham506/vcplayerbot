@@ -27,6 +27,6 @@ aiofiles
 aiohttp
 asyncio
 pytgcalls==3.0.0.dev19
-git+https://github.com/pytube/pytube
+git+git://github.com/kshubham506/pytube
 cachetools
 async-cache
