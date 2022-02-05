@@ -26,7 +26,7 @@ Pillow
 aiofiles
 aiohttp
 asyncio
-pytgcalls==3.0.0.dev19
+pytgcalls==3.0.0.dev21
 git+https://github.com/glubsy/pytube@nfunc_regex_patch
 cachetools
 async-cache
