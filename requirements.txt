@@ -3,7 +3,7 @@ autopep8
 pyaes
 pyasn1
 pycodestyle
-git+https://github.com/pyrogram/pyrogram@master
+pyrogram
 PySocks
 rsa
 TgCrypto
