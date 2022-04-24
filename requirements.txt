@@ -27,6 +27,6 @@ aiofiles
 aiohttp
 asyncio
 pytgcalls==3.0.0.dev21
-pytube
+git+https://github.com/thatsyogeshjjr/pytube@patch-1
 cachetools
 async-cache
