@@ -8,10 +8,7 @@ from extras import music_player
 
 
 @Client.on_message(
-    filters.command(["stop", "stop@vcplayerbot"])
-    & ~filters.edited
-    & ~filters.bot
-    & ~filters.private
+    filters.command(["stop", "stop@vcplayerbot"]) & ~filters.bot & ~filters.private
 )
 @save_user_chat_in_db
 @is_bot_admin

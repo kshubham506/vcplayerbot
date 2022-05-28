@@ -26,7 +26,7 @@ def validate_command(parsed_command, auth_docs, filtered_chat):
 
 
 @Client.on_message(
-    filters.command(["auth", "auth@vcplayerbot"]) & ~filters.edited & filters.private,
+    filters.command(["auth", "auth@vcplayerbot"]) & filters.private,
     group=-1,
 )
 @must_have_mongo

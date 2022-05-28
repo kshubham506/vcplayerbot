@@ -17,10 +17,7 @@ import uuid
 
 
 @Client.on_message(
-    filters.command(["play", "play@vcplayerbot"])
-    & ~filters.edited
-    & ~filters.bot
-    & ~filters.private
+    filters.command(["play", "play@vcplayerbot"]) & ~filters.bot & ~filters.private
 )
 @save_user_chat_in_db
 @is_bot_admin

@@ -6,9 +6,7 @@ from pyrogram import Client, filters
 from utils import logException
 
 
-@Client.on_message(
-    filters.command(["help", "help@vcplayerbot"]) & ~filters.edited & ~filters.bot
-)
+@Client.on_message(filters.command(["help", "help@vcplayerbot"]) & ~filters.bot)
 @save_user_chat_in_db
 async def info(client, message, current_client):
     try:
@@ -24,7 +22,7 @@ async def info(client, message, current_client):
         logException(f"Error in info: {ex}", True)
 
 
-@Client.on_message(filters.command(["start", "start@vcplayerbot"]) & ~filters.edited)
+@Client.on_message(filters.command(["start", "start@vcplayerbot"]))
 @save_user_chat_in_db
 async def startCommand(client, message, current_client):
     try:

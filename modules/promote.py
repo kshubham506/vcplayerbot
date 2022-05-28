@@ -10,10 +10,7 @@ Only allowed by sudo user
 
 
 @Client.on_message(
-    filters.command(["promote", "promote@vcplayerbot"])
-    & ~filters.edited
-    & ~filters.bot
-    & filters.private
+    filters.command(["promote", "promote@vcplayerbot"]) & ~filters.bot & filters.private
 )
 async def promote(client, message):
     try:

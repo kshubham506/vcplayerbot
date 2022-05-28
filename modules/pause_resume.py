@@ -8,10 +8,7 @@ from extras import music_player
 
 
 @Client.on_message(
-    filters.command(["pause", "pause@vcplayerbot"])
-    & ~filters.edited
-    & ~filters.bot
-    & ~filters.private
+    filters.command(["pause", "pause@vcplayerbot"]) & ~filters.bot & ~filters.private
 )
 @save_user_chat_in_db
 @is_bot_admin
@@ -34,10 +31,7 @@ async def pause(client, message, current_client):
 
 
 @Client.on_message(
-    filters.command(["resume", "resume@vcplayerbot"])
-    & ~filters.edited
-    & ~filters.bot
-    & ~filters.private
+    filters.command(["resume", "resume@vcplayerbot"]) & ~filters.bot & ~filters.private
 )
 @save_user_chat_in_db
 @is_bot_admin
