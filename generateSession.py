@@ -7,11 +7,11 @@ try:
     print(
         "Make sure you have API Client ID and Hash , If not goto my.telegram.org and generate it.\n\n"
     )
-    API_ID = input("Enter Your API ID -  ")
-    API_HASH = input("Enter Your API HASH -  ")
+    API_ID = input("Enter Your API ID - 16126827 ")
+    API_HASH = input("Enter Your API HASH - d20e26deea812797eb00e731122a8372  ")
 
     print(
-        "\n\nNow it will ask you to enter your phone number(in international format) and then follow the steps"
+        "\n\nNow it will ask you to enter your phone number(+918553324207) and then follow the steps"
     )
 
     client = Client(":memory:", api_id=API_ID, api_hash=API_HASH)
