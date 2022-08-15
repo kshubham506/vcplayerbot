@@ -4,7 +4,7 @@ Play any media(song, video, live, remote) directly into your group voice chat.
 Official Bot : [VCPlayerBot](https://telegram.me/vcplayerbot)   |   Discussion Group : [VoiceChat Music Player Support](https://telegram.me/voicechatsupport)
 
 <p align="center">
-  <img width="200" height="200" src="https://i.postimg.cc/QdH3XrxV/Screenshot-2021-05-05-203005-removebg-preview.png">
+  <img width="200" height="200" src="https://github.com/kshubham506/vcplayerbot/blob/master/etc/logo.jpg?raw=true">
 </p>
 
 [Checkout AutoForwarder Bot](https://sktechhub.com/auto-forward) | [Try Code Compile Bot](https://t.me/codecompilebot)
@@ -71,7 +71,7 @@ Command | Description
 
 
 <p align="center">
-  <img width="500" height="300" src="https://i.postimg.cc/qRtC4bD2/photo-2021-05-28-00-15-11.jpg">
+  <img width="500" height="300" src="https://github.com/kshubham506/vcplayerbot/blob/master/etc/signs_of_time.jpg?raw=true">
 </p>
 
 # Developer
